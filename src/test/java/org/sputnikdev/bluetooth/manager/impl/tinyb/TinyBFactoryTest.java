@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl;
+package org.sputnikdev.bluetooth.manager.impl.tinyb;
 
 import java.util.Arrays;
 
@@ -10,12 +10,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.impl.tinyb.TinyBFactory;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,18 +71,60 @@ public class TinyBFactoryTest {
     public void testGetAdapter() throws Exception {
         assertEquals(ADAPTER, tinyBFactory.getAdapter(ADAPTER).getURL());
         verify(adapter, times(1)).getAddress();
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(null);
+        assertNull(tinyBFactory.getAdapter(ADAPTER));
     }
 
     @Test
     public void testGetDevice() throws Exception {
         assertEquals(DEVICE, tinyBFactory.getDevice(DEVICE).getURL());
         verify(device, times(1)).getAddress();
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(null);
+        assertNull(tinyBFactory.getDevice(DEVICE));
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(adapter);
+        when(bluetoothManager.getObject(BluetoothType.DEVICE, null,
+                DEVICE.getDeviceAddress(), adapter)).thenReturn(null);
+        assertNull(tinyBFactory.getDevice(DEVICE));
     }
 
     @Test
     public void testGetCharacteristic() throws Exception {
         assertEquals(CHARACTERISTIC, tinyBFactory.getCharacteristic(CHARACTERISTIC).getURL());
         verify(characteristic, times(1)).getUUID();
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(null);
+        assertNull(tinyBFactory.getCharacteristic(CHARACTERISTIC));
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(adapter);
+        when(bluetoothManager.getObject(BluetoothType.DEVICE, null,
+                DEVICE.getDeviceAddress(), adapter)).thenReturn(null);
+        assertNull(tinyBFactory.getCharacteristic(CHARACTERISTIC));
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(adapter);
+        when(bluetoothManager.getObject(BluetoothType.DEVICE, null,
+                DEVICE.getDeviceAddress(), adapter)).thenReturn(device);
+        when(bluetoothManager.getObject(BluetoothType.GATT_SERVICE, null,
+                CHARACTERISTIC.getServiceUUID(), device)).thenReturn(null);
+        assertNull(tinyBFactory.getCharacteristic(CHARACTERISTIC));
+
+        when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
+                ADAPTER.getAdapterAddress(), null)).thenReturn(adapter);
+        when(bluetoothManager.getObject(BluetoothType.DEVICE, null,
+                DEVICE.getDeviceAddress(), adapter)).thenReturn(device);
+        when(bluetoothManager.getObject(BluetoothType.GATT_SERVICE, null,
+                CHARACTERISTIC.getServiceUUID(), device)).thenReturn(service);
+        when(bluetoothManager.getObject(BluetoothType.GATT_CHARACTERISTIC, null,
+                CHARACTERISTIC.getCharacteristicUUID(), service)).thenReturn(null);
+        assertNull(tinyBFactory.getCharacteristic(CHARACTERISTIC));
     }
 
     @Test

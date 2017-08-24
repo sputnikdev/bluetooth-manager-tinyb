@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl;
+package org.sputnikdev.bluetooth.manager.impl.tinyb;
 
 /*-
  * #%L
@@ -21,8 +21,9 @@ package org.sputnikdev.bluetooth.manager.impl;
  */
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.impl.Characteristic;
+import org.sputnikdev.bluetooth.manager.impl.Notification;
 import tinyb.BluetoothDevice;
-import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 import tinyb.BluetoothNotification;
@@ -58,7 +59,7 @@ class TinyBCharacteristic implements Characteristic {
     }
 
     @Override
-    public byte[] readValue() throws BluetoothException {
+    public byte[] readValue() {
         return characteristic.readValue();
     }
 
@@ -78,7 +79,7 @@ class TinyBCharacteristic implements Characteristic {
     }
 
     @Override
-    public boolean writeValue(byte[] bytes) throws BluetoothException {
+    public boolean writeValue(byte[] bytes) {
         return characteristic.writeValue(bytes);
     }
 }

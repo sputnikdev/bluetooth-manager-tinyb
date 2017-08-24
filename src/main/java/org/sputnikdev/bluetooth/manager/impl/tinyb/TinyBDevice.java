@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl;
+package org.sputnikdev.bluetooth.manager.impl.tinyb;
 
 /*-
  * #%L
@@ -25,8 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.impl.Device;
+import org.sputnikdev.bluetooth.manager.impl.Notification;
+import org.sputnikdev.bluetooth.manager.impl.Service;
 import tinyb.BluetoothDevice;
-import tinyb.BluetoothException;
 import tinyb.BluetoothGattService;
 import tinyb.BluetoothNotification;
 
@@ -53,12 +55,12 @@ class TinyBDevice implements Device {
     }
 
     @Override
-    public boolean disconnect() throws BluetoothException {
+    public boolean disconnect() {
         return device.disconnect();
     }
 
     @Override
-    public boolean connect() throws BluetoothException {
+    public boolean connect() {
         return device.connect();
     }
 

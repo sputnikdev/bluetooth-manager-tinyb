@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl;
+package org.sputnikdev.bluetooth.manager.impl.tinyb;
 
 /*-
  * #%L
@@ -25,9 +25,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.impl.Adapter;
+import org.sputnikdev.bluetooth.manager.impl.Device;
+import org.sputnikdev.bluetooth.manager.impl.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
-import tinyb.BluetoothException;
 import tinyb.BluetoothNotification;
 
 /**
@@ -106,12 +108,12 @@ class TinyBAdapter implements Adapter {
     }
 
     @Override
-    public boolean startDiscovery() throws BluetoothException {
+    public boolean startDiscovery() {
         return adapter.startDiscovery();
     }
 
     @Override
-    public boolean stopDiscovery() throws BluetoothException {
+    public boolean stopDiscovery() {
         return adapter.stopDiscovery();
     }
 

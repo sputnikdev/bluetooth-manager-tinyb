@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl;
+package org.sputnikdev.bluetooth.manager.impl.tinyb;
 
 /*-
  * #%L
@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.impl.Adapter;
+import org.sputnikdev.bluetooth.manager.impl.BluetoothObjectFactory;
+import org.sputnikdev.bluetooth.manager.impl.Characteristic;
+import org.sputnikdev.bluetooth.manager.impl.Device;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
@@ -35,56 +39,68 @@ import tinyb.BluetoothType;
  *
  * @author Vlad Kolotov
  */
-public class TinyBFactory extends BluetoothObjectFactory {
+public class TinyBFactory implements BluetoothObjectFactory {
 
     public static final String TINYB_PROTOCOL_NAME = "tinyb";
 
     public TinyBFactory() { }
 
     @Override
-    protected Adapter getAdapter(URL url) {
+    public Adapter getAdapter(URL url) {
         BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.ADAPTER, null, url.getAdapterAddress(), null);
-        return new TinyBAdapter(adapter);
+        return adapter != null ? new TinyBAdapter(adapter) : null;
     }
 
     @Override
-    protected Device getDevice(URL url) {
+    public Device getDevice(URL url) {
         BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.ADAPTER, null, url.getAdapterAddress(), null);
+        if (adapter == null) {
+            return null;
+        }
         BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
-        return new TinyBDevice(device);
+        return device != null ? new TinyBDevice(device) : null;
     }
 
     @Override
-    protected Characteristic getCharacteristic(URL url) {
+    public Characteristic getCharacteristic(URL url) {
         BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.ADAPTER, null, url.getAdapterAddress(), null);
+        if (adapter == null) {
+            return null;
+        }
         BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
+        if (device == null) {
+            return null;
+        }
         BluetoothGattService service = (BluetoothGattService) BluetoothManager.getBluetoothManager().getObject(
                         BluetoothType.GATT_SERVICE, null, url.getServiceUUID(), device);
+        if (service == null) {
+            return null;
+        }
         BluetoothGattCharacteristic characteristic = (BluetoothGattCharacteristic)
                 BluetoothManager.getBluetoothManager().getObject(
                         BluetoothType.GATT_CHARACTERISTIC, null, url.getCharacteristicUUID(), service);
-        return new TinyBCharacteristic(characteristic);
+        return characteristic != null ? new TinyBCharacteristic(characteristic) : null;
     }
 
     @Override
-    protected List<Adapter> getDiscoveredAdapters() {
+    public List<Adapter> getDiscoveredAdapters() {
         return BluetoothManager.getBluetoothManager().getAdapters().stream().map(
                 TinyBAdapter::new).collect(Collectors.toList());
     }
 
     @Override
-    protected List<Device> getDiscoveredDevices() {
+    public List<Device> getDiscoveredDevices() {
         return BluetoothManager.getBluetoothManager().getDevices().stream().map(
                 TinyBDevice::new).collect(Collectors.toList());
     }
 
     @Override
-    protected String getProtocolName() {
+    public String getProtocolName() {
         return TINYB_PROTOCOL_NAME;
     }
 }
