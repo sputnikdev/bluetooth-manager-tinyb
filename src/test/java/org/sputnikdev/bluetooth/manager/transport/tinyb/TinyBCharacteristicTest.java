@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl.tinyb;
+package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +10,6 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.impl.Notification;
-import org.sputnikdev.bluetooth.manager.impl.tinyb.TinyBCharacteristic;
-import org.sputnikdev.bluetooth.manager.impl.tinyb.TinyBFactory;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;

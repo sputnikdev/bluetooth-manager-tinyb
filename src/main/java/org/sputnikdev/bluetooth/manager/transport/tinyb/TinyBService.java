@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl.tinyb;
+package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 /*-
  * #%L
@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.impl.Characteristic;
-import org.sputnikdev.bluetooth.manager.impl.Service;
+import org.sputnikdev.bluetooth.manager.transport.Characteristic;
+import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;

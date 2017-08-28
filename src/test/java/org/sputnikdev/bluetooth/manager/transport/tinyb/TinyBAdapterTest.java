@@ -1,4 +1,4 @@
-package org.sputnikdev.bluetooth.manager.impl.tinyb;
+package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +15,8 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.impl.Device;
+import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.impl.Notification;
-import org.sputnikdev.bluetooth.manager.impl.tinyb.TinyBAdapter;
-import org.sputnikdev.bluetooth.manager.impl.tinyb.TinyBFactory;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothNotification;
