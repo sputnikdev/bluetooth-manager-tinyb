@@ -21,8 +21,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  */
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
-import org.sputnikdev.bluetooth.manager.impl.Notification;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;

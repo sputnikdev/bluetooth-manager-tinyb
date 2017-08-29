@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Device;
-import org.sputnikdev.bluetooth.manager.impl.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattService;

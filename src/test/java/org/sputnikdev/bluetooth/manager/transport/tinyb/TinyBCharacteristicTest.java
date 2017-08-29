@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.impl.Notification;
+import org.sputnikdev.bluetooth.manager.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
