@@ -60,4 +60,7 @@ class TinyBService implements Service {
         }
         return Collections.unmodifiableList(result);
     }
+
+    @Override
+    public void dispose() { }
 }

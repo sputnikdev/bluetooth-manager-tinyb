@@ -20,17 +20,17 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.Notification;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattService;
 import tinyb.BluetoothNotification;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -82,6 +82,12 @@ class TinyBDevice implements Device {
     @Override
     public boolean isBlocked() {
         return device.getBlocked();
+    }
+
+    @Override
+    public boolean isBleEnabled() {
+        //TODO get proper state of manufacturer advertisement
+        return getBluetoothClass() == 0;
     }
 
     @Override
@@ -169,4 +175,7 @@ class TinyBDevice implements Device {
         }
         return Collections.unmodifiableList(result);
     }
+
+    @Override
+    public void dispose() { }
 }

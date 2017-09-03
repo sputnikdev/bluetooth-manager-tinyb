@@ -20,20 +20,17 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.DiscoveredAdapter;
+import org.sputnikdev.bluetooth.manager.DiscoveredDevice;
 import org.sputnikdev.bluetooth.manager.transport.Adapter;
 import org.sputnikdev.bluetooth.manager.transport.BluetoothObjectFactory;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import org.sputnikdev.bluetooth.manager.transport.Device;
-import tinyb.BluetoothAdapter;
-import tinyb.BluetoothDevice;
-import tinyb.BluetoothGattCharacteristic;
-import tinyb.BluetoothGattService;
-import tinyb.BluetoothManager;
-import tinyb.BluetoothType;
+import tinyb.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -88,19 +85,34 @@ public class TinyBFactory implements BluetoothObjectFactory {
     }
 
     @Override
-    public List<Adapter> getDiscoveredAdapters() {
+    public List<DiscoveredAdapter> getDiscoveredAdapters() {
         return BluetoothManager.getBluetoothManager().getAdapters().stream().map(
-                TinyBAdapter::new).collect(Collectors.toList());
+                TinyBFactory::convert).collect(Collectors.toList());
     }
 
     @Override
-    public List<Device> getDiscoveredDevices() {
+    public List<DiscoveredDevice> getDiscoveredDevices() {
         return BluetoothManager.getBluetoothManager().getDevices().stream().map(
-                TinyBDevice::new).collect(Collectors.toList());
+                TinyBFactory::convert).collect(Collectors.toList());
     }
 
     @Override
     public String getProtocolName() {
         return TINYB_PROTOCOL_NAME;
+    }
+
+    private static DiscoveredDevice convert(BluetoothDevice device) {
+        return new DiscoveredDevice(new URL(TINYB_PROTOCOL_NAME,
+                device.getAdapter().getAddress(), device.getAddress()),
+                device.getName(), device.getAlias(), device.getRSSI(),
+                device.getBluetoothClass(),
+                //TODO implement proper determination of the device type
+                device.getBluetoothClass() == 0);
+    }
+
+    private static DiscoveredAdapter convert(BluetoothAdapter adapter) {
+        return new DiscoveredAdapter(new URL(TINYB_PROTOCOL_NAME,
+                adapter.getAddress(), null),
+                adapter.getName(), adapter.getAlias());
     }
 }

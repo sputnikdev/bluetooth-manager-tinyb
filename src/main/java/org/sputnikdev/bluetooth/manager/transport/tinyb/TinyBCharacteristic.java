@@ -21,7 +21,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  */
 
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.Notification;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
@@ -82,4 +82,7 @@ class TinyBCharacteristic implements Characteristic {
     public boolean writeValue(byte[] bytes) {
         return characteristic.writeValue(bytes);
     }
+
+    @Override
+    public void dispose() { }
 }

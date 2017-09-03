@@ -20,17 +20,17 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.Notification;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Adapter;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothNotification;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -128,4 +128,7 @@ class TinyBAdapter implements Adapter {
         }
         return Collections.unmodifiableList(result);
     }
+
+    @Override
+    public void dispose() { }
 }

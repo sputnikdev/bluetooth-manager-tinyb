@@ -16,7 +16,7 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Device;
-import org.sputnikdev.bluetooth.manager.Notification;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothNotification;
