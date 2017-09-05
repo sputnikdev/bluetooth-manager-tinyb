@@ -9,22 +9,16 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
-import tinyb.BluetoothAdapter;
-import tinyb.BluetoothDevice;
-import tinyb.BluetoothGattCharacteristic;
-import tinyb.BluetoothGattService;
-import tinyb.BluetoothNotification;
+import tinyb.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor({"tinyb.BluetoothManager", "tinyb.BluetoothObject"})
@@ -34,7 +28,7 @@ public class TinyBCharacteristicTest {
     private static final String DEVICE_MAC = "12:34:56:78:90:12";
     private static final String SERVICE_UUID = "f000aa11-0451-4000-b000-000000000000";
     private static final String CHARACTERISTIC_UUID = "a000aa11-0451-4000-b000-000000000000";
-    private static final String[] FLAGS = {"read", "write", "notify"};
+    private static final String[] FLAGS = {"read", "write-without-response", "notify"};
     private static final boolean NOTIFYING = true;
     private static final byte[] VALUE = {1, 2, 3, 4};
 
@@ -82,7 +76,11 @@ public class TinyBCharacteristicTest {
 
     @Test
     public void testGetFlags() throws Exception {
-        assertArrayEquals(FLAGS, tinyBCharacteristic.getFlags());
+        Set<CharacteristicAccessType> expected = Stream.of(CharacteristicAccessType.READ,
+                CharacteristicAccessType.WRITE_WITHOUT_RESPONSE,
+                CharacteristicAccessType.NOTIFY).collect(Collectors.toSet());
+
+        assertTrue(expected.containsAll(tinyBCharacteristic.getFlags()));
         verify(bluetoothGattCharacteristic, times(1)).getFlags();
     }
 
