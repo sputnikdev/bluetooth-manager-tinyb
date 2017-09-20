@@ -1,6 +1,6 @@
 language: java
 before_install:
-    - mvn validate
+    - mvn install:install-file -Dfile=lib/tinyb.jar -DgroupId=intel-iot-devkit -DartifactId=tinyb -Dversion=0.6.0-SNAPSHOT -Dpackaging=jar -DlocalRepositoryPath=lib
 script: mvn test -P !build-extras -B
 notifications:
   slack: kolotov:69j2qLZ0paybeuQMcKfyN2gP

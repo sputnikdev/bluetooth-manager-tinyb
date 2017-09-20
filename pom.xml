@@ -57,6 +57,13 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>Local repository</id>
+            <url>file://${basedir}/lib</url>
+        </repository>
+    </repositories>
+
     <profiles>
         <profile>
             <id>sign</id>
