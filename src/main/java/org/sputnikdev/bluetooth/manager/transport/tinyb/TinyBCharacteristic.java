@@ -63,6 +63,10 @@ class TinyBCharacteristic implements Characteristic {
         AccessTypeMapping(CharacteristicAccessType accessType) {
             this.accessType = accessType;
         }
+
+        CharacteristicAccessType getAccessType() {
+            return accessType;
+        }
     }
 
     private final BluetoothGattCharacteristic characteristic;
@@ -106,7 +110,7 @@ class TinyBCharacteristic implements Characteristic {
         String[] flags = characteristic.getFlags();
         return Stream.of(flags)
                 .filter(Objects::nonNull)
-                .map(flag -> AccessTypeMapping.valueOf(flag.toLowerCase().replaceAll("-", "_")).accessType)
+                .map(flag -> AccessTypeMapping.valueOf(flag.toLowerCase().replaceAll("-", "_")).getAccessType())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
