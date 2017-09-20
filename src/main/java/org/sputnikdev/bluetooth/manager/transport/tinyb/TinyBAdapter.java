@@ -131,5 +131,7 @@ class TinyBAdapter implements Adapter {
     }
 
     @Override
-    public void dispose() { }
+    public void dispose() {
+        // do nothing
+    }
 }

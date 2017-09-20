@@ -62,5 +62,7 @@ class TinyBService implements Service {
     }
 
     @Override
-    public void dispose() { }
+    public void dispose() {
+        // do nothing
+    }
 }

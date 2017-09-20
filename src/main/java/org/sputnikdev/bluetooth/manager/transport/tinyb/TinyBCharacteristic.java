@@ -141,5 +141,7 @@ class TinyBCharacteristic implements Characteristic {
     }
 
     @Override
-    public void dispose() { }
+    public void dispose() {
+        // do nothing
+    }
 }

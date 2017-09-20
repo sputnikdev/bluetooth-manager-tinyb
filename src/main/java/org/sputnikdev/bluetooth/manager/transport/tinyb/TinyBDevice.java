@@ -177,5 +177,7 @@ class TinyBDevice implements Device {
     }
 
     @Override
-    public void dispose() { }
+    public void dispose() {
+        // do nothing
+    }
 }
