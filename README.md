@@ -4,4 +4,16 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/478caa4b9498441f89bd1a880b7f8b53)](https://www.codacy.com/app/vkolotov/bluetooth-manager-tinyb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sputnikdev/bluetooth-manager-tinyb&amp;utm_campaign=Badge_Grade)
 [![Join the chat at https://gitter.im/sputnikdev/bluetooth-manager-tinyb](https://badges.gitter.im/sputnikdev/bluetooth-manager-tinyb.svg)](https://gitter.im/sputnikdev/bluetooth-manager-tinyb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 # bluetooth-manager-tinyb
-A transport implementation for Bluetooth Manager based on tinyb library
+A transport implementation for Bluetooth Manager based on tinyb library.
+
+---
+## Contribution
+
+To build the project you will need to install the TinyB library into your maven repository. Run this in the root of the project:
+```sh
+sh .travis/install-dependencies.sh
+```
+Then run maven build:
+```sh
+mvn clean install
+```
