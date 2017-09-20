@@ -20,10 +20,11 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
+
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Adapter;
 import org.sputnikdev.bluetooth.manager.transport.Device;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothNotification;
@@ -33,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * A class representing TinyB adapters.
  * @author Vlad Kolotov
  */
 class TinyBAdapter implements Adapter {
@@ -60,8 +61,8 @@ class TinyBAdapter implements Adapter {
     }
 
     @Override
-    public void setAlias(String s) {
-        adapter.setAlias(s);
+    public void setAlias(String alias) {
+        adapter.setAlias(alias);
     }
 
     @Override
@@ -84,8 +85,8 @@ class TinyBAdapter implements Adapter {
     }
 
     @Override
-    public void setPowered(boolean b) {
-        adapter.setPowered(b);
+    public void setPowered(boolean powered) {
+        adapter.setPowered(powered);
     }
 
     @Override

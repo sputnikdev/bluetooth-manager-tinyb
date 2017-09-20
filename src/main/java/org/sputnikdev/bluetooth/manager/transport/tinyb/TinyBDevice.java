@@ -21,8 +21,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  */
 
 import org.sputnikdev.bluetooth.URL;
-import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Device;
+import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattService;
@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * A class representing TinyB devices.
  * @author Vlad Kolotov
  */
 class TinyBDevice implements Device {

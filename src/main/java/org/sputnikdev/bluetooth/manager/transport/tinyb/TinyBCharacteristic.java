@@ -34,22 +34,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType.*;
-
 /**
- *
+ * A class representing TinyB characteristics.
  * @author Vlad Kolotov
  */
 class TinyBCharacteristic implements Characteristic {
 
     private enum AccessTypeMapping {
-        broadcast(BROADCAST),
-        read(READ),
-        write_without_response(WRITE_WITHOUT_RESPONSE),
-        write(WRITE),
-        notify(NOTIFY),
-        indicate(INDICATE),
-        authenticated_signed_writes(AUTHENTICATED_SIGNED_WRITES),
+        broadcast(CharacteristicAccessType.BROADCAST),
+        read(CharacteristicAccessType.READ),
+        write_without_response(CharacteristicAccessType.WRITE_WITHOUT_RESPONSE),
+        write(CharacteristicAccessType.WRITE),
+        notify(CharacteristicAccessType.NOTIFY),
+        indicate(CharacteristicAccessType.INDICATE),
+        authenticated_signed_writes(CharacteristicAccessType.AUTHENTICATED_SIGNED_WRITES),
 
         reliable_write(null),
         writable_auxiliaries(null),
@@ -60,7 +58,7 @@ class TinyBCharacteristic implements Characteristic {
         secure_read(null),
         secure_write(null);
 
-        private CharacteristicAccessType accessType;
+        private final CharacteristicAccessType accessType;
 
         AccessTypeMapping(CharacteristicAccessType accessType) {
             this.accessType = accessType;
@@ -108,7 +106,7 @@ class TinyBCharacteristic implements Characteristic {
         String[] flags = characteristic.getFlags();
         return Stream.of(flags)
                 .filter(Objects::nonNull)
-                .map(f -> AccessTypeMapping.valueOf(f.toLowerCase().replaceAll("-", "_")).accessType)
+                .map(flag -> AccessTypeMapping.valueOf(flag.toLowerCase().replaceAll("-", "_")).accessType)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
@@ -124,8 +122,7 @@ class TinyBCharacteristic implements Characteristic {
     }
 
     @Override
-    public void
-    enableValueNotifications(Notification<byte[]> notification) {
+    public void enableValueNotifications(Notification<byte[]> notification) {
         characteristic.enableValueNotifications(new BluetoothNotification<byte[]>() {
             @Override public void run(byte[] bytes) {
                 notification.notify(bytes);

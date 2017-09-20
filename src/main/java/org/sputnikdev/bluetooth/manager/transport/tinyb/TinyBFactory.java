@@ -27,20 +27,23 @@ import org.sputnikdev.bluetooth.manager.transport.Adapter;
 import org.sputnikdev.bluetooth.manager.transport.BluetoothObjectFactory;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import org.sputnikdev.bluetooth.manager.transport.Device;
-import tinyb.*;
+import tinyb.BluetoothAdapter;
+import tinyb.BluetoothDevice;
+import tinyb.BluetoothGattCharacteristic;
+import tinyb.BluetoothGattService;
+import tinyb.BluetoothManager;
+import tinyb.BluetoothType;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * A Bluetooth Manager Transport abstraction layer implementation based on TinyB library.
  * @author Vlad Kolotov
  */
 public class TinyBFactory implements BluetoothObjectFactory {
 
     public static final String TINYB_PROTOCOL_NAME = "tinyb";
-
-    public TinyBFactory() { }
 
     @Override
     public Adapter getAdapter(URL url) {
