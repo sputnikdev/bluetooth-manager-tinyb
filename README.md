@@ -19,6 +19,35 @@ The TinyB transport brings support for:
  * Linux based operation systems.
  * A wide range of hardware architectures (including some ARM based devices, e.g. Raspberry PI etc).
 
+## Prerequisites
+
+You must upgrade your bluez library to 5.43+. This is due to some changes in DBus API in bluez 5.43v.
+
+To check what version you have use bluetoothctrl utility:
+```sh
+bluetoothctl
+
+[bluetooth]# version
+```
+ 
+If you have an older bluez version you can upgrade it by running the following (ubuntu):
+
+```sh
+sudo  apt-get install debhelper dh-autoreconf flex bison libdbus-glib-1-dev libglib2.0-dev  libcap-ng-dev libudev-dev libreadline-dev libical-dev check dh-systemd libebook1.2-dev
+
+wget https://launchpad.net/ubuntu/+archive/primary/+files/bluez_5.43.orig.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+files/bluez_5.43-0ubuntu1.debian.tar.xz
+wget https://launchpad.net/ubuntu/+archive/primary/+files/bluez_5.43-0ubuntu1.dsc
+
+tar xf bluez_5.43.orig.tar.xz
+cd bluez-5.43
+tar xf ../bluez_5.43-0ubuntu1.debian.tar.xz
+debchange --local=~lorenzen 'Backport to Xenial'
+debuild -b -j4
+cd ..
+sudo dpkg -i *.deb
+```
+
 ---
 ## Contribution
 
