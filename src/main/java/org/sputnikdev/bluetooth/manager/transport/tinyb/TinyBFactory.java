@@ -45,6 +45,12 @@ public class TinyBFactory implements BluetoothObjectFactory {
 
     public static final String TINYB_PROTOCOL_NAME = "tinyb";
 
+    public static boolean loadNativeLibraries() {
+        String libFolder = NativesLoader.getLibFolder();
+        return NativesLoader.load(libFolder + "/libtinyb.so") &&
+            NativesLoader.load(libFolder + "/libjavatinyb.so");
+    }
+
     @Override
     public Adapter getAdapter(URL url) {
         BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
