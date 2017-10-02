@@ -20,13 +20,13 @@ public class NativesLoaderTest {
     }
 
     @Test
-    public void testLoad() throws Exception {
+    public void testPrepare() throws Exception {
         System.setProperty("os.name", "Linux");
         System.setProperty("os.arch", "x86_64");
         File tempLibFile = new File(NativesLoader.prepare("libjavatinyb.so"));
         assertTrue(tempLibFile.exists());
         assertEquals("libjavatinyb.so", tempLibFile.getName());
-        assertEquals(System.getProperty("java.io.tmpdir"), tempLibFile.getParentFile().getParentFile() + "/");
+        assertEquals(new File(System.getProperty("java.io.tmpdir")), tempLibFile.getParentFile().getParentFile());
     }
 
     @Test(expected = IllegalStateException.class)
