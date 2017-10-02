@@ -1,12 +1,11 @@
 package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
@@ -15,8 +14,12 @@ import tinyb.BluetoothGattService;
 import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor({"tinyb.BluetoothManager", "tinyb.BluetoothObject"})
+@PrepareForTest(NativesLoader.class)
 public class TinyBFactoryTest {
 
     private static final URL CHARACTERISTIC = new URL("tinyb://11:22:33:44:55:66/10:20:30:40:50:60/0180/aa11");
@@ -142,4 +146,27 @@ public class TinyBFactoryTest {
     public void testGetProtocolName() throws Exception {
         assertEquals(TinyBFactory.TINYB_PROTOCOL_NAME, tinyBFactory.getProtocolName());
     }
+
+    @Test
+    public void testLoadNativeLibraries() throws Exception {
+        PowerMockito.mockStatic(NativesLoader.class);
+        PowerMockito.when(NativesLoader.isSupportedEnvironment()).thenReturn(true);
+        PowerMockito.when(NativesLoader.prepare(any())).thenReturn("/anypath/anylib");
+
+        TinyBFactory.loadNativeLibraries();
+
+        PowerMockito.verifyStatic(times(1));
+    }
+
+    @Test
+    public void testLoadNativeLIbrariesEnvNotSupported() {
+        PowerMockito.mockStatic(NativesLoader.class);
+        PowerMockito.when(NativesLoader.isSupportedEnvironment()).thenReturn(false);
+
+        assertFalse(TinyBFactory.loadNativeLibraries());
+
+        PowerMockito.verifyStatic(times(1));
+    }
+
+
 }

@@ -2,7 +2,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 /*-
  * #%L
- * org.sputnikdev:bluetooth-manager
+ * org.sputnikdev:bluetooth-manager-tinyb
  * %%
  * Copyright (C) 2017 Sputnik Dev
  * %%

@@ -2,7 +2,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 /*-
  * #%L
- * org.sputnikdev:bluetooth-manager
+ * org.sputnikdev:bluetooth-manager-tinyb
  * %%
  * Copyright (C) 2017 Sputnik Dev
  * %%
@@ -20,6 +20,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.DiscoveredAdapter;
 import org.sputnikdev.bluetooth.manager.DiscoveredDevice;
@@ -34,6 +36,7 @@ import tinyb.BluetoothGattService;
 import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +48,26 @@ public class TinyBFactory implements BluetoothObjectFactory {
 
     public static final String TINYB_PROTOCOL_NAME = "tinyb";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinyBFactory.class);
+
+    /**
+     * Loads TinyB native libraries from classpath by copying them to a temp folder.
+     * @return true if all libraries succesefully loaded, false otherwise
+     */
     public static boolean loadNativeLibraries() {
-        String libFolder = NativesLoader.getLibFolder();
-        return NativesLoader.load(libFolder + "/libtinyb.so") &&
-            NativesLoader.load(libFolder + "/libjavatinyb.so");
+        if (NativesLoader.isSupportedEnvironment()) {
+            try {
+                System.load(NativesLoader.prepare("libtinyb.so")); // $COVERAGE-IGNORE$
+                System.load(NativesLoader.prepare("libjavatinyb.so")); // $COVERAGE-IGNORE$
+                return true; // $COVERAGE-IGNORE$
+            } catch (Throwable e) {
+                LOGGER.info("Could not load TinyB native libraries.", e);
+                return false;
+            }
+        }
+        LOGGER.info("TinyB: environemnt is not supported. Only Linux OS; x86, x86_64 and arm6 architectures; "
+            + "are supported.");
+        return false;
     }
 
     @Override

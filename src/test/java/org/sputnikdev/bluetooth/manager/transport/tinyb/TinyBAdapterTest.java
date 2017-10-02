@@ -187,4 +187,10 @@ public class TinyBAdapterTest {
         assertEquals(URL.copyWithDevice(DEVICE_1_MAC), devices.get(0).getURL());
         assertEquals(URL.copyWithDevice(DEVICE_2_MAC), devices.get(1).getURL());
     }
+
+    @Test
+    public void testDispose() {
+        tinyBAdapter.dispose();
+        verifyNoMoreInteractions(bluetoothAdapter);
+    }
 }

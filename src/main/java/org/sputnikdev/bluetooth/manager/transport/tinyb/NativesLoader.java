@@ -2,7 +2,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 /*-
  * #%L
- * org.sputnikdev:bluetooth-manager
+ * org.sputnikdev:bluetooth-manager-tinyb
  * %%
  * Copyright (C) 2017 Sputnik Dev
  * %%
@@ -21,56 +21,50 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  */
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * An utility class that loads tinyb native libraries from classpath by copying them into the temp directory.
  * @author Vlad Kolotov
  */
-class NativesLoader {
+final class NativesLoader {
 
-    static boolean load(String library) {
+    private NativesLoader() { }
+
+    static String prepare(String library) throws IOException {
+        if (!isLinux()) {
+            throw new IllegalStateException("Operation system is not suported: " + getOsName());
+        }
+        String libraryPath = getLibFolder() + "/" + library;
         BufferedInputStream tinyBClasspathStream = null;
         try {
-            tinyBClasspathStream = new BufferedInputStream(NativesLoader.class.getResourceAsStream(library), 1000);
-            String fileName = new File(library).getName();
-            //String libFileName = FilenameUtils.getBaseName(library);
-
-            File tempDirectory = File.createTempFile("tinyb", "libs");
-            tempDirectory.delete();
-            tempDirectory.mkdir();
-            try {
-                tempDirectory.deleteOnExit();
-            } catch (Exception ex) {
-                // old jvms
-            }
-
-            File lib = new File(tempDirectory, fileName);
+            tinyBClasspathStream = new BufferedInputStream(NativesLoader.class.getResourceAsStream(libraryPath), 1000);
+            File lib = new File(createTempDirectory(), new File(library).getName());
             if (lib.createNewFile()) {
                 FileUtils.copyInputStreamToFile(tinyBClasspathStream, lib);
-                System.load(lib.getAbsolutePath());
-                return true;
+                return lib.getAbsolutePath();
             }
-
-        } catch (Exception ex) {
-            return false;
+            throw new IllegalStateException("Could not create a temporary file: " + lib.getAbsolutePath());
         } finally {
             IOUtils.closeQuietly(tinyBClasspathStream);
         }
-        return false;
+    }
+
+    static boolean isSupportedEnvironment() {
+        //TODO add some checks for Bluez versions, e.g. that it is greater than v4.43
+        return isLinux();
     }
 
     static String getLibFolder() {
         if (isARM()) {
             return "/native/arm/armv6";
-        } else if (isLinux()) {
+        } else {
             return is64Bit() ? "/native/linux/x86_64" : "/native/linux/x86_32";
         }
-        throw new IllegalStateException("Unsupported OS: " + getOsName());
     }
 
     static boolean isARM() {
@@ -92,6 +86,18 @@ class NativesLoader {
 
     private static String getOsArch() {
         return System.getProperty("os.arch").toLowerCase();
+    }
+
+    private static File createTempDirectory() throws IOException {
+        File tempDirectory = File.createTempFile("tinyb", "libs");
+        tempDirectory.delete();
+        tempDirectory.mkdir();
+        try {
+            tempDirectory.deleteOnExit();
+        } catch (Exception ignored) {
+            // old jvms
+        }
+        return tempDirectory;
     }
 
 }

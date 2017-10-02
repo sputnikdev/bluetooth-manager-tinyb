@@ -122,4 +122,10 @@ public class TinyBCharacteristicTest {
         assertTrue(tinyBCharacteristic.writeValue(VALUE));
         verify(bluetoothGattCharacteristic, times(1)).writeValue(VALUE);
     }
+
+    @Test
+    public void testDispose() {
+        tinyBCharacteristic.dispose();
+        verifyNoMoreInteractions(bluetoothAdapter, bluetoothDevice, bluetoothGattService, bluetoothGattCharacteristic);
+    }
 }

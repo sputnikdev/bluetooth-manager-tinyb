@@ -255,4 +255,11 @@ public class TinyBDeviceTest {
         assertEquals(URL.copyWith(SERVICE_1_UUID, null), services.get(0).getURL());
         assertEquals(URL.copyWith(SERVICE_2_UUID, null), services.get(1).getURL());
     }
+
+    @Test
+    public void testDispose() {
+        tinyBDevice.dispose();
+        verifyNoMoreInteractions(bluetoothAdapter, bluetoothDevice);
+    }
+
 }

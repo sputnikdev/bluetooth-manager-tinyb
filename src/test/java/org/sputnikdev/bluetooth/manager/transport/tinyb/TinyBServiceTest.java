@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -97,4 +98,11 @@ public class TinyBServiceTest {
         assertEquals(URL.copyWith(SERVICE_UUID, CHARACTERISTIC_2_UUID),
                 characteristics.get(1).getURL());
     }
+
+    @Test
+    public void testDispose() {
+        tinyBService.dispose();
+        verifyNoMoreInteractions(bluetoothAdapter, bluetoothDevice, bluetoothGattService);
+    }
+
 }
