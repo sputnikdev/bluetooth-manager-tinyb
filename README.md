@@ -60,7 +60,7 @@ You are welcome to contribute to the project, the project environment is designe
 
 The build process is streamlined by using standard maven tools. 
 
-To build the project you will need to install the TinyB library into your maven repository. Run this in the root of the project:
+To build the project you will need to install the TinyB library into your maven repository. Run this in the root of the project (use install-dependencies.bat file for windows):
 ```sh
 sh .travis/install-dependencies.sh
 ```
@@ -90,7 +90,11 @@ In order to update TinyB library the following steps should be done:
   * <tinyb>/build/src/libtinyb.so to <project root>/src/main/resources/native/arm/armv6/libtinyb.so
   * <tinyb>/build/java/jni/libjavatinyb.so to <project root>/src/main/resources/native/arm/armv6/libjavatinyb.so
   * <tinyb>/build/java/tinyb.jar to <project root>/lib/tinyb.jar
-* Update the TinyB "Specification-Version" number int the [MANIFEST.MF](META-INF/MANIFEST.MF) file:
+* Update the TinyB "Specification-Version" number int the [MANIFEST.MF](https://github.com/sputnikdev/bluetooth-manager-tinyb/blob/master/src/main/resources/META-INF/MANIFEST.MF) file:
   * Unpack tinyb.jar file which was copied earlier
   * Find its "Specification-Version" in the MANIFEST.MF file (<tinyb.jar>/META-INF/MANIFEST.MF)
-  * Update "Specification-Version" in the project [MANIFEST.MF](META-INF/MANIFEST.MF) file
+  * Update "Specification-Version" in the project [MANIFEST.MF](https://github.com/sputnikdev/bluetooth-manager-tinyb/blob/master/src/main/resources/META-INF/MANIFEST.MF) file
+* Optional (if you are planning to use the project locally): Install TinyB library into your local maven repository:
+  * sh .travis/install-dependencies.sh (use install-dependencies.bat file for windows)
+* Optional (if you are planning to use the project locally): Build the project
+  * mvn clean install
