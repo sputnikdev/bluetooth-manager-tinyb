@@ -51,6 +51,8 @@ sudo dpkg -i *.deb
 ---
 ## Contribution
 
+### Building
+
 You are welcome to contribute to the project, the project environment is designed to make it easy by using:
 * Travis CI to release artifacts directly to the Maven Central repository.
 * Code style rules to support clarity and supportability. The results can be seen in the Codacy. 
@@ -74,3 +76,21 @@ mvn release:prepare -B
 mvn release:perform
 ```
 Travis CI process will take care of everything, you will find a new artifact in the Maven Central repository when the release process finishes successfully.
+
+### Updating TinyB library
+
+All TinyB dependencies (jar file and native libs) are manged by the project and automatically loaded in runtime, so that end-users do not have to build and install TinyB library locally.
+
+In order to update TinyB library the following steps should be done:
+* Build TinyB library as per TinyB [documentation](https://github.com/intel-iot-devkit/tinyb#using-tinyb) for each CPU architecure type:
+  * x86_32
+  * x86_64
+  * arm6
+* Copy/replace the following files (arm architecure is used in the examples below, similar paths should be used for the other archs):
+  * <tinyb>/build/src/libtinyb.so to <project root>/src/main/resources/native/arm/armv6/libtinyb.so
+  * <tinyb>/build/java/jni/libjavatinyb.so to <project root>/src/main/resources/native/arm/armv6/libjavatinyb.so
+  * <tinyb>/build/java/tinyb.jar to <project root>/lib/tinyb.jar
+* Update the TinyB "Specification-Version" number int the [MANIFEST.MF](META-INF/MANIFEST.MF) file:
+  * Unpack tinyb.jar file which was copied earlier
+  * Find its "Specification-Version" in the MANIFEST.MF file (<tinyb.jar>/META-INF/MANIFEST.MF)
+  * Update "Specification-Version" in the project [MANIFEST.MF](META-INF/MANIFEST.MF) file
