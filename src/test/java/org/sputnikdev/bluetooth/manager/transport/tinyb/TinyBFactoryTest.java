@@ -98,6 +98,7 @@ public class TinyBFactoryTest {
 
     @Test
     public void testGetCharacteristic() throws Exception {
+        when(device.getConnected()).thenReturn(true);
         assertEquals(CHARACTERISTIC, tinyBFactory.getCharacteristic(CHARACTERISTIC).getURL());
         verify(characteristic, times(1)).getUUID();
 

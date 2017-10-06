@@ -98,7 +98,7 @@ public class TinyBFactory implements BluetoothObjectFactory {
         }
         BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
-        if (device == null) {
+        if (device == null || !device.getConnected()) {
             return null;
         }
         BluetoothGattService service = (BluetoothGattService) BluetoothManager.getBluetoothManager().getObject(

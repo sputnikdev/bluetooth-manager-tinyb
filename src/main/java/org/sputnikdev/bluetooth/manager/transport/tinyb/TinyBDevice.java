@@ -168,6 +168,9 @@ class TinyBDevice implements Device {
 
     @Override
     public List<Service> getServices() {
+        if (!device.getConnected()) {
+            return null;
+        }
         List<BluetoothGattService> services = device.getServices();
         List<Service> result = new ArrayList<>(services.size());
         for (BluetoothGattService nativeService : services) {
