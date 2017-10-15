@@ -109,6 +109,7 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public boolean startDiscovery() {
+        adapter.setRssiDiscoveryFilter(-100);
         return adapter.startDiscovery();
     }
 
