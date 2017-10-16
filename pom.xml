@@ -63,6 +63,10 @@
             <name>Sonatype Snapshots Maven Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </repositories>
 
     <profiles>
@@ -157,7 +161,7 @@
         <dependency>
             <groupId>org.sputnikdev</groupId>
             <artifactId>bluetooth-manager</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>intel-iot-devkit</groupId>
