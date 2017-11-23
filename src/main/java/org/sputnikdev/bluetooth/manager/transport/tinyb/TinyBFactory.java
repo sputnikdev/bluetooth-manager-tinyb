@@ -36,8 +36,8 @@ import tinyb.BluetoothGattService;
 import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -128,6 +128,9 @@ public class TinyBFactory implements BluetoothObjectFactory {
     public String getProtocolName() {
         return TINYB_PROTOCOL_NAME;
     }
+
+    @Override
+    public void configure(Map<String, Object> config) { /* do nothing for now */ }
 
     private static DiscoveredDevice convert(BluetoothDevice device) {
         return new DiscoveredDevice(new URL(TINYB_PROTOCOL_NAME,
