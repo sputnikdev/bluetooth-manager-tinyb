@@ -132,6 +132,21 @@ public class TinyBFactory implements BluetoothObjectFactory {
     @Override
     public void configure(Map<String, Object> config) { /* do nothing for now */ }
 
+    public void dispose() {
+        try {
+            BluetoothManager.getBluetoothManager().stopDiscovery();
+        } catch (Exception ignore) { }
+        BluetoothManager.getBluetoothManager().getServices().forEach(TinyBFactory::closeSilently);
+        BluetoothManager.getBluetoothManager().getDevices().forEach(TinyBFactory::closeSilently);
+        BluetoothManager.getBluetoothManager().getAdapters().forEach(TinyBFactory::closeSilently);
+    }
+
+    private static void closeSilently(AutoCloseable autoCloseable) {
+        try {
+            autoCloseable.close();
+        } catch (Exception ignore) { }
+    }
+
     private static DiscoveredDevice convert(BluetoothDevice device) {
         return new DiscoveredDevice(new URL(TINYB_PROTOCOL_NAME,
                 device.getAdapter().getAddress(), device.getAddress()),
