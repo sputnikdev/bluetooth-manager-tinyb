@@ -115,6 +115,11 @@ class TinyBDevice implements Device {
     }
 
     @Override
+    public short getTxPower() {
+        return device.getTxPower();
+    }
+
+    @Override
     public void enableRSSINotifications(Notification<Short> notification) {
         device.enableRSSINotifications(new BluetoothNotification<Short>() {
             @Override public void run(Short value) {

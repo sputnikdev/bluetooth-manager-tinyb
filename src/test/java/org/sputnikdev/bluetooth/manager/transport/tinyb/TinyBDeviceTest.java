@@ -40,6 +40,7 @@ public class TinyBDeviceTest {
     private static final int CLASS = 1;
     private static final boolean BLOCKED = true;
     private static final short RSSI = -80;
+    private static final short TX_POWER = -60;
     private static final boolean CONNECTED = true;
     private static final boolean SERVICES_RESOLVED = true;
 
@@ -66,6 +67,7 @@ public class TinyBDeviceTest {
         when(bluetoothDevice.getBluetoothClass()).thenReturn(CLASS);
         when(bluetoothDevice.getBlocked()).thenReturn(BLOCKED);
         when(bluetoothDevice.getRSSI()).thenReturn(RSSI);
+        when(bluetoothDevice.getTxPower()).thenReturn(TX_POWER);
         when(bluetoothDevice.getConnected()).thenReturn(CONNECTED);
         when(bluetoothDevice.getServicesResolved()).thenReturn(SERVICES_RESOLVED);
 
@@ -162,6 +164,12 @@ public class TinyBDeviceTest {
     public void testGetRSSI() throws Exception {
         assertEquals(RSSI, tinyBDevice.getRSSI());
         verify(bluetoothDevice, times(1)).getRSSI();
+    }
+
+    @Test
+    public void testGetTxPower() throws Exception {
+        assertEquals(TX_POWER, tinyBDevice.getTxPower());
+        verify(bluetoothDevice, times(1)).getTxPower();
     }
 
     @Test
