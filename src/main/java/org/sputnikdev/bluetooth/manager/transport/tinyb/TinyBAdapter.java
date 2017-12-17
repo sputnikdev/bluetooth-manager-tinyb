@@ -20,6 +20,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Adapter;
 import org.sputnikdev.bluetooth.manager.transport.Device;
@@ -37,6 +39,8 @@ import java.util.List;
  * @author Vlad Kolotov
  */
 class TinyBAdapter implements Adapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinyBAdapter.class);
 
     private final BluetoothAdapter adapter;
 
@@ -73,7 +77,11 @@ class TinyBAdapter implements Adapter {
     public void enablePoweredNotifications(Notification<Boolean> notification) {
         adapter.enablePoweredNotifications(new BluetoothNotification<Boolean>() {
             @Override public void run(Boolean powered) {
-                notification.notify(powered);
+                try {
+                    notification.notify(powered);
+                } catch (Exception ex) {
+                    LOGGER.error("Powered notification execution error", ex);
+                }
             }
         });
     }
@@ -97,7 +105,11 @@ class TinyBAdapter implements Adapter {
     public void enableDiscoveringNotifications(Notification<Boolean> notification) {
         adapter.enableDiscoveringNotifications(new BluetoothNotification<Boolean>() {
             @Override public void run(Boolean value) {
-                notification.notify(value);
+                try {
+                    notification.notify(value);
+                } catch (Exception ex) {
+                    LOGGER.error("Discovering notification execution error", ex);
+                }
             }
         });
     }

@@ -20,6 +20,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType;
@@ -39,6 +41,8 @@ import java.util.stream.Stream;
  * @author Vlad Kolotov
  */
 class TinyBCharacteristic implements Characteristic {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinyBCharacteristic.class);
 
     private enum AccessTypeMapping {
         broadcast(CharacteristicAccessType.BROADCAST),
@@ -129,7 +133,11 @@ class TinyBCharacteristic implements Characteristic {
     public void enableValueNotifications(Notification<byte[]> notification) {
         characteristic.enableValueNotifications(new BluetoothNotification<byte[]>() {
             @Override public void run(byte[] bytes) {
-                notification.notify(bytes);
+                try {
+                    notification.notify(bytes);
+                } catch (Exception ex) {
+                    LOGGER.error("Value notification execution error", ex);
+                }
             }
         });
     }

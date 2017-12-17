@@ -22,7 +22,13 @@ import tinyb.BluetoothGattService;
 import tinyb.BluetoothNotification;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyShort;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -146,6 +152,10 @@ public class TinyBDeviceTest {
 
         captor.getValue().run(Boolean.TRUE);
         verify(notification, times(1)).notify(Boolean.TRUE);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
+        captor.getValue().run(Boolean.FALSE);
+        verify(notification, times(1)).notify(Boolean.FALSE);
     }
 
     @Test
@@ -185,6 +195,10 @@ public class TinyBDeviceTest {
 
         captor.getValue().run(RSSI);
         verify(notification, times(1)).notify(RSSI);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyShort());
+        captor.getValue().run(RSSI);
+        verify(notification, times(2)).notify(RSSI);
     }
 
     @Test
@@ -212,6 +226,10 @@ public class TinyBDeviceTest {
 
         captor.getValue().run(CONNECTED);
         verify(notification, times(1)).notify(CONNECTED);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
+        captor.getValue().run(false);
+        verify(notification, times(1)).notify(false);
     }
 
     @Test
@@ -239,6 +257,10 @@ public class TinyBDeviceTest {
 
         captor.getValue().run(SERVICES_RESOLVED);
         verify(notification, times(1)).notify(SERVICES_RESOLVED);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
+        captor.getValue().run(false);
+        verify(notification, times(1)).notify(false);
     }
 
     @Test
@@ -262,12 +284,23 @@ public class TinyBDeviceTest {
 
         assertEquals(URL.copyWith(SERVICE_1_UUID, null), services.get(0).getURL());
         assertEquals(URL.copyWith(SERVICE_2_UUID, null), services.get(1).getURL());
+
+        when(bluetoothDevice.getConnected()).thenReturn(false);
+        assertNull(tinyBDevice.getServices());
     }
 
     @Test
     public void testDispose() {
         tinyBDevice.dispose();
         verifyNoMoreInteractions(bluetoothAdapter, bluetoothDevice);
+    }
+
+    @Test
+    public void testIsBleEnabled() {
+        when(bluetoothDevice.getBluetoothClass()).thenReturn(0);
+        assertTrue(tinyBDevice.isBleEnabled());
+        when(bluetoothDevice.getBluetoothClass()).thenReturn(1);
+        assertFalse(tinyBDevice.isBleEnabled());
     }
 
 }

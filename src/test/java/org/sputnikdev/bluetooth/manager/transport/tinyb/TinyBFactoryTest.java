@@ -15,13 +15,17 @@ import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
@@ -68,6 +72,7 @@ public class TinyBFactoryTest {
 
         when(bluetoothManager.getAdapters()).thenReturn(Arrays.asList(adapter));
         when(bluetoothManager.getDevices()).thenReturn(Arrays.asList(device));
+        when(bluetoothManager.getServices()).thenReturn(Arrays.asList(service));
     }
 
     @Test
@@ -169,5 +174,27 @@ public class TinyBFactoryTest {
         PowerMockito.verifyStatic(times(1));
     }
 
+    @Test
+    public void testDispose() {
+        tinyBFactory.dispose();
 
+        doThrow(RuntimeException.class).when(adapter).close();
+        doThrow(RuntimeException.class).when(device).close();
+        doThrow(RuntimeException.class).when(service).close();
+
+        verify(bluetoothManager).stopDiscovery();
+        verify(adapter).close();
+        verify(device).close();
+        verify(service).close();
+    }
+
+    @Test
+    public void testConfigure() {
+        Map<String, Object> config = new HashMap<>();
+        config.put("config1", "value1");
+        tinyBFactory.configure(config);
+
+        // there is nothing happening for the current implementation
+        verifyNoMoreInteractions(bluetoothManager, adapter, device, service);
+    }
 }

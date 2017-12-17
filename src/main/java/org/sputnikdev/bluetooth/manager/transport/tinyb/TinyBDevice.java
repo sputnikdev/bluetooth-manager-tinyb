@@ -20,6 +20,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
  * #L%
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
@@ -31,12 +33,16 @@ import tinyb.BluetoothNotification;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A class representing TinyB devices.
  * @author Vlad Kolotov
  */
 class TinyBDevice implements Device {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinyBDevice.class);
 
     private final BluetoothDevice device;
 
@@ -94,7 +100,11 @@ class TinyBDevice implements Device {
     public void enableBlockedNotifications(Notification<Boolean> notification) {
         device.enableBlockedNotifications(new BluetoothNotification<Boolean>() {
             @Override public void run(Boolean value) {
-                notification.notify(value);
+                try {
+                    notification.notify(value);
+                } catch (Exception ex) {
+                    LOGGER.error("Blocked notification execution error", ex);
+                }
             }
         });
     }
@@ -123,7 +133,11 @@ class TinyBDevice implements Device {
     public void enableRSSINotifications(Notification<Short> notification) {
         device.enableRSSINotifications(new BluetoothNotification<Short>() {
             @Override public void run(Short value) {
-                notification.notify(value);
+                try {
+                    notification.notify(value);
+                } catch (Exception ex) {
+                    LOGGER.error("RSSI notification execution error", ex);
+                }
             }
         });
     }
@@ -142,7 +156,11 @@ class TinyBDevice implements Device {
     public void enableConnectedNotifications(Notification<Boolean> notification) {
         device.enableConnectedNotifications(new BluetoothNotification<Boolean>() {
             @Override public void run(Boolean value) {
-                notification.notify(value);
+                try {
+                    notification.notify(value);
+                } catch (Exception ex) {
+                    LOGGER.error("Connected notification execution error", ex);
+                }
             }
         });
     }
@@ -161,7 +179,11 @@ class TinyBDevice implements Device {
     public void enableServicesResolvedNotifications(Notification<Boolean> notification) {
         device.enableServicesResolvedNotifications(new BluetoothNotification<Boolean>() {
             @Override public void run(Boolean value) {
-                notification.notify(value);
+                try {
+                    notification.notify(value);
+                } catch (Exception ex) {
+                    LOGGER.error("Services resolved notification execution error", ex);
+                }
             }
         });
     }

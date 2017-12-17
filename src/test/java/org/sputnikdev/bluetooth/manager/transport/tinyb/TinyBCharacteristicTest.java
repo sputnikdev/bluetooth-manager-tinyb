@@ -109,6 +109,10 @@ public class TinyBCharacteristicTest {
 
         captor.getValue().run(VALUE);
         verify(notification, times(1)).notify(VALUE);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyVararg());
+        captor.getValue().run(VALUE);
+        verify(notification, times(2)).notify(VALUE);
     }
 
     @Test

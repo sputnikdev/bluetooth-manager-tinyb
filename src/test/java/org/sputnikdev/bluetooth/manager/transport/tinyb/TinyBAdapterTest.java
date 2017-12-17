@@ -22,7 +22,9 @@ import tinyb.BluetoothDevice;
 import tinyb.BluetoothNotification;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -118,6 +120,10 @@ public class TinyBAdapterTest {
 
         captor.getValue().run(Boolean.TRUE);
         verify(notification, times(1)).notify(Boolean.TRUE);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
+        captor.getValue().run(Boolean.FALSE);
+        verify(notification, times(1)).notify(Boolean.FALSE);
     }
 
     @Test
@@ -151,6 +157,10 @@ public class TinyBAdapterTest {
 
         captor.getValue().run(Boolean.TRUE);
         verify(notification, times(1)).notify(Boolean.TRUE);
+
+        doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
+        captor.getValue().run(Boolean.FALSE);
+        verify(notification, times(1)).notify(Boolean.FALSE);
     }
 
     @Test

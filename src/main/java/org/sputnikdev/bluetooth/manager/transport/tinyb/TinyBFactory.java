@@ -132,6 +132,9 @@ public class TinyBFactory implements BluetoothObjectFactory {
     @Override
     public void configure(Map<String, Object> config) { /* do nothing for now */ }
 
+    /**
+     * Disposing TinyB factory by closing/disposing all adapters, devices and services.
+     */
     public void dispose() {
         try {
             BluetoothManager.getBluetoothManager().stopDiscovery();
