@@ -4,10 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
 import org.sputnikdev.bluetooth.URL;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
@@ -17,11 +20,14 @@ import tinyb.BluetoothType;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +37,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor({"tinyb.BluetoothManager", "tinyb.BluetoothObject"})
-@PrepareForTest(NativesLoader.class)
+@PrepareForTest({ NativesLoader.class, TinyBFactory.class })
 public class TinyBFactoryTest {
 
     private static final URL CHARACTERISTIC = new URL("tinyb://11:22:33:44:55:66/10:20:30:40:50:60/0180/aa11");
@@ -44,13 +50,23 @@ public class TinyBFactoryTest {
     private BluetoothGattCharacteristic characteristic = mock(BluetoothGattCharacteristic.class);
     private BluetoothManager bluetoothManager = mock(BluetoothManager.class);
 
+    @Mock
+    private ExecutorService fakeExecutorService;
 
     @InjectMocks
     private TinyBFactory tinyBFactory;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         PowerMockito.mockStatic(BluetoothManager.class);
+        PowerMockito.spy(TinyBFactory.class);
+        PowerMockito.doCallRealMethod().when(TinyBFactory.class, "notifySafely", any(), any(), anyString());
+        PowerMockito.doReturn(fakeExecutorService).when(TinyBFactory.class, "getNotificationService");
+        when(fakeExecutorService.submit(any(Runnable.class))).thenAnswer((Answer<Future<?>>) invocation -> {
+            invocation.getArgumentAt(0, Runnable.class).run();
+            return null;
+        });
+
         when(BluetoothManager.getBluetoothManager()).thenReturn(bluetoothManager);
         when(adapter.getAddress()).thenReturn(ADAPTER.getAdapterAddress());
         when(device.getAddress()).thenReturn(DEVICE.getDeviceAddress());
@@ -176,11 +192,11 @@ public class TinyBFactoryTest {
 
     @Test
     public void testDispose() {
-        tinyBFactory.dispose();
-
         doThrow(RuntimeException.class).when(adapter).close();
         doThrow(RuntimeException.class).when(device).close();
         doThrow(RuntimeException.class).when(service).close();
+
+        tinyBFactory.dispose();
 
         verify(bluetoothManager).stopDiscovery();
         verify(adapter).close();
@@ -196,5 +212,26 @@ public class TinyBFactoryTest {
 
         // there is nothing happening for the current implementation
         verifyNoMoreInteractions(bluetoothManager, adapter, device, service);
+    }
+
+    @Test
+    public void testNotifySafely() {
+        Runnable notification = mock(Runnable.class);
+        Logger logger = mock(Logger.class);
+        String message = "Error!";
+        TinyBFactory.notifySafely(notification, logger, message);
+        verify(notification, times(1)).run();
+        verifyNoMoreInteractions(logger);
+
+        RuntimeException ex = new RuntimeException();
+        doThrow(ex).when(notification).run();
+        TinyBFactory.notifySafely(notification, logger, message);
+        verify(notification, times(2)).run();
+        verify(logger, times(1)).error(message, ex);
+    }
+
+    @Test
+    public void testGetNotificationService() {
+        //assertNotNull(TinyBFactory.getNotificationService());
     }
 }

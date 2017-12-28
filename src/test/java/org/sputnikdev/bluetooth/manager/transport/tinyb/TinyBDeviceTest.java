@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
@@ -25,8 +30,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyShort;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -37,6 +44,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor({"tinyb.BluetoothManager", "tinyb.BluetoothObject"})
+@PrepareForTest(TinyBFactory.class)
 public class TinyBDeviceTest {
 
     private static final String ADAPTER_MAC = "11:22:33:44:55:66";
@@ -59,12 +67,22 @@ public class TinyBDeviceTest {
     private BluetoothAdapter bluetoothAdapter;
     @Mock
     private BluetoothDevice bluetoothDevice;
+    @Mock
+    private ExecutorService fakeExecutorService;
 
     @InjectMocks
     private TinyBDevice tinyBDevice;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        PowerMockito.mockStatic(TinyBFactory.class);
+        PowerMockito.doCallRealMethod().when(TinyBFactory.class, "notifySafely", any(), any(), anyString());
+        PowerMockito.doReturn(fakeExecutorService).when(TinyBFactory.class, "getNotificationService");
+        when(fakeExecutorService.submit(any(Runnable.class))).thenAnswer((Answer<Future<?>>) invocation -> {
+            invocation.getArgumentAt(0, Runnable.class).run();
+            return null;
+        });
+
         when(bluetoothAdapter.getAddress()).thenReturn(ADAPTER_MAC);
         when(bluetoothDevice.getAdapter()).thenReturn(bluetoothAdapter);
         when(bluetoothDevice.getAddress()).thenReturn(DEVICE_MAC);
@@ -151,12 +169,10 @@ public class TinyBDeviceTest {
         verifyNoMoreInteractions(bluetoothDevice, notification);
 
         captor.getValue().run(Boolean.TRUE);
-        Thread.sleep(1);
         verify(notification, times(1)).notify(Boolean.TRUE);
 
         doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
         captor.getValue().run(Boolean.FALSE);
-        Thread.sleep(1);
         verify(notification, times(1)).notify(Boolean.FALSE);
     }
 

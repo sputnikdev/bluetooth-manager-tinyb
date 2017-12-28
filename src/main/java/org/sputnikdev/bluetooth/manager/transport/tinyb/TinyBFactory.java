@@ -149,7 +149,7 @@ public class TinyBFactory implements BluetoothObjectFactory {
     }
 
     static void notifySafely(Runnable noticator, Logger logger, String errorMessage) {
-        NOTIFICATION_SERVICE.submit(() -> {
+        getNotificationService().submit(() -> {
             try {
                 noticator.run();
             } catch (Exception ex) {
@@ -158,10 +158,14 @@ public class TinyBFactory implements BluetoothObjectFactory {
         });
     }
 
+    private static ExecutorService getNotificationService() {
+        return NOTIFICATION_SERVICE;
+    }
+
     private static void closeSilently(AutoCloseable autoCloseable) {
         try {
             autoCloseable.close();
-        } catch (Exception ignore) { }
+        } catch (Exception ignore) { /* do nothing */ }
     }
 
     private static DiscoveredDevice convert(BluetoothDevice device) {

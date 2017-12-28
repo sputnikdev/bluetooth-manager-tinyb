@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
@@ -14,6 +17,8 @@ import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.*;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor({"tinyb.BluetoothManager", "tinyb.BluetoothObject"})
+@PrepareForTest(TinyBFactory.class)
 public class TinyBCharacteristicTest {
 
     private static final String ADAPTER_MAC = "11:22:33:44:55:66";
@@ -43,12 +49,22 @@ public class TinyBCharacteristicTest {
     private BluetoothGattService bluetoothGattService;
     @Mock
     private BluetoothGattCharacteristic bluetoothGattCharacteristic;
+    @Mock
+    private ExecutorService fakeExecutorService;
 
     @InjectMocks
     private TinyBCharacteristic tinyBCharacteristic;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        PowerMockito.mockStatic(TinyBFactory.class);
+        PowerMockito.doCallRealMethod().when(TinyBFactory.class, "notifySafely", any(), any(), anyString());
+        PowerMockito.doReturn(fakeExecutorService).when(TinyBFactory.class, "getNotificationService");
+        when(fakeExecutorService.submit(any(Runnable.class))).thenAnswer((Answer<Future<?>>) invocation -> {
+            invocation.getArgumentAt(0, Runnable.class).run();
+            return null;
+        });
+
         when(bluetoothAdapter.getAddress()).thenReturn(ADAPTER_MAC);
         when(bluetoothDevice.getAdapter()).thenReturn(bluetoothAdapter);
         when(bluetoothDevice.getAddress()).thenReturn(DEVICE_MAC);
@@ -108,7 +124,6 @@ public class TinyBCharacteristicTest {
         verifyNoMoreInteractions(bluetoothDevice, notification);
 
         captor.getValue().run(VALUE);
-        Thread.sleep(1);
         verify(notification, times(1)).notify(VALUE);
 
         doThrow(RuntimeException.class).when(notification).notify(anyVararg());
