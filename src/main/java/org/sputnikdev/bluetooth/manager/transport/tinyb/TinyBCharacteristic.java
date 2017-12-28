@@ -29,7 +29,6 @@ import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
-import tinyb.BluetoothNotification;
 
 import java.util.Objects;
 import java.util.Set;
@@ -131,14 +130,10 @@ class TinyBCharacteristic implements Characteristic {
 
     @Override
     public void enableValueNotifications(Notification<byte[]> notification) {
-        characteristic.enableValueNotifications(new BluetoothNotification<byte[]>() {
-            @Override public void run(byte[] bytes) {
-                try {
-                    notification.notify(bytes);
-                } catch (Exception ex) {
-                    LOGGER.error("Value notification execution error", ex);
-                }
-            }
+        characteristic.enableValueNotifications(bytes -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(bytes);
+            }, LOGGER, "Value notification execution error");
         });
     }
 
@@ -153,7 +148,5 @@ class TinyBCharacteristic implements Characteristic {
     }
 
     @Override
-    public void dispose() {
-        // do nothing
-    }
+    public void dispose() { /* do nothing */ }
 }

@@ -108,6 +108,7 @@ public class TinyBCharacteristicTest {
         verifyNoMoreInteractions(bluetoothDevice, notification);
 
         captor.getValue().run(VALUE);
+        Thread.sleep(1);
         verify(notification, times(1)).notify(VALUE);
 
         doThrow(RuntimeException.class).when(notification).notify(anyVararg());

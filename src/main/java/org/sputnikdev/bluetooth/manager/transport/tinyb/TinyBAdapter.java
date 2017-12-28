@@ -28,7 +28,6 @@ import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
-import tinyb.BluetoothNotification;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,14 +74,10 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void enablePoweredNotifications(Notification<Boolean> notification) {
-        adapter.enablePoweredNotifications(new BluetoothNotification<Boolean>() {
-            @Override public void run(Boolean powered) {
-                try {
-                    notification.notify(powered);
-                } catch (Exception ex) {
-                    LOGGER.error("Powered notification execution error", ex);
-                }
-            }
+        adapter.enablePoweredNotifications(powered -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(powered);
+            }, LOGGER, "Powered notification execution error");
         });
     }
 
@@ -103,14 +98,10 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void enableDiscoveringNotifications(Notification<Boolean> notification) {
-        adapter.enableDiscoveringNotifications(new BluetoothNotification<Boolean>() {
-            @Override public void run(Boolean value) {
-                try {
-                    notification.notify(value);
-                } catch (Exception ex) {
-                    LOGGER.error("Discovering notification execution error", ex);
-                }
-            }
+        adapter.enableDiscoveringNotifications(value -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(value);
+            }, LOGGER, "Discovering notification execution error");
         });
     }
 
@@ -143,7 +134,5 @@ class TinyBAdapter implements Adapter {
     }
 
     @Override
-    public void dispose() {
-        // do nothing
-    }
+    public void dispose() { /* do nothing */ }
 }

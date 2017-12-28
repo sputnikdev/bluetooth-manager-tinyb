@@ -119,10 +119,12 @@ public class TinyBAdapterTest {
         verifyNoMoreInteractions(bluetoothAdapter, notification);
 
         captor.getValue().run(Boolean.TRUE);
+        Thread.sleep(1);
         verify(notification, times(1)).notify(Boolean.TRUE);
 
         doThrow(RuntimeException.class).when(notification).notify(anyBoolean());
         captor.getValue().run(Boolean.FALSE);
+        Thread.sleep(1);
         verify(notification, times(1)).notify(Boolean.FALSE);
     }
 
@@ -156,6 +158,7 @@ public class TinyBAdapterTest {
         verifyNoMoreInteractions(bluetoothAdapter, notification);
 
         captor.getValue().run(Boolean.TRUE);
+        Thread.sleep(1);
         verify(notification, times(1)).notify(Boolean.TRUE);
 
         doThrow(RuntimeException.class).when(notification).notify(anyBoolean());

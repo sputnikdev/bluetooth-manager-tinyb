@@ -38,6 +38,8 @@ import tinyb.BluetoothType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +51,8 @@ public class TinyBFactory implements BluetoothObjectFactory {
     public static final String TINYB_PROTOCOL_NAME = "tinyb";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinyBFactory.class);
+
+    private static final ExecutorService NOTIFICATION_SERVICE = Executors.newCachedThreadPool();
 
     /**
      * Loads TinyB native libraries from classpath by copying them to a temp folder.
@@ -142,6 +146,16 @@ public class TinyBFactory implements BluetoothObjectFactory {
         BluetoothManager.getBluetoothManager().getServices().forEach(TinyBFactory::closeSilently);
         BluetoothManager.getBluetoothManager().getDevices().forEach(TinyBFactory::closeSilently);
         BluetoothManager.getBluetoothManager().getAdapters().forEach(TinyBFactory::closeSilently);
+    }
+
+    static void notifySafely(Runnable noticator, Logger logger, String errorMessage) {
+        NOTIFICATION_SERVICE.submit(() -> {
+            try {
+                noticator.run();
+            } catch (Exception ex) {
+                logger.error(errorMessage, ex);
+            }
+        });
     }
 
     private static void closeSilently(AutoCloseable autoCloseable) {
