@@ -21,9 +21,9 @@ The TinyB transport brings support for:
 
 ## Prerequisites
 
-You must upgrade your bluez library to 5.43+. This is due to some changes in DBus API in bluez 5.43v.
+You must upgrade your Bluez software to 5.43+. This is due to some changes in the DBus API in Bluez 5.43v.
 
-You can use systemctl utility to check what bluez version you are running:
+You can use systemctl utility to check which Bluez version you are running:
 ```sh
 pi@raspberrypi:~ $ sudo systemctl status bluetooth
 ● bluetooth.service - Bluetooth service
@@ -39,20 +39,20 @@ Dec 01 16:33:34 raspberrypi systemd[1]: Starting Bluetooth service...
 Dec 01 16:33:35 raspberrypi bluetoothd[677]: Bluetooth daemon 5.47
 Dec 01 16:33:35 raspberrypi systemd[1]: Started Bluetooth service.
 ```
-Notice a line that contains bluez version:
+Notice a line that contains Bluez version:
 ```sh
 Dec 01 16:33:35 raspberrypi bluetoothd[677]: Bluetooth daemon 5.47
 ```
  
-If you have an older bluez version you can upgrade it by doing the following (ubuntu/raspbian):
+If you have an older Bluez version you must upgrade it. There are several ways to accomplish this (ubuntu/raspbian):
 
 ### Building bluez from sources
-1. If you are using Raspberry PI, then do not uninstall existing bluez, otherwise the internal bluetooth module won't work.
-2. Install build tools:
+1. If you are using Raspberry PI, then do not uninstall existing Bluez, otherwise the internal bluetooth module won't work.
+2. Install some build tools:
 ```sh
 sudo apt-get install libglib2.0-dev libdbus-1-dev libudev-dev libical-dev libreadline6 libreadline6-dev
 ```
-3. Download bluez source code, e.g: 
+3. Download Bluez source code, e.g: 
 ```sh 
 wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.47.tar.xz
 ```
@@ -60,30 +60,30 @@ wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.47.tar.xz
 ```
 tar -xf bluez-5.47.tar.xz cd bluez-5.47
 ```
-5. Configure bluez codebase:
+5. Configure Bluez project:
 ```sh
 ./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var
 ```
-6. Build bluez from sources:
+6. Build Bluez from sources:
 ```sh 
 make
 sudo make install
 ```
-7. Make sure that bluez start up service is pointing to the new bluez:
+7. Make sure that the Bluez start up service is pointing to the newly built Bluez:
 ```sh
 nano /lib/systemd/system/bluetooth.service
 ```
-You shoud see there something like that:
+You should see something like that:
 ```sh
 ExecStart=/usr/libexec/bluetooth/bluetoothd
 ```
-Run the script above to see bluez version:
+Run the script below to see Bluez version:
 ```sh
 pi@raspberrypi:~ $ cd /usr/libexec/bluetooth/
 pi@raspberrypi:/usr/libexec/bluetooth $ ./bluetoothd --version
 5.47
 ```
-8. Edit bluez d-bus config to add permission to access bluez for bluetooth group (/etc/dbus-1/system.d/bluetooth.conf):
+8. Edit Bluez DBus config to add a permission to access Bluez for the bluetooth group (/etc/dbus-1/system.d/bluetooth.conf):
 ```xml
 <busconfig>
   <policy user="root">
