@@ -59,7 +59,7 @@ wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.47.tar.xz
 ```
 4. Extract the tar archive: 
 ```
-tar -xf bluez-5.47.tar.xz cd bluez-5.47
+tar -xf bluez-5.47.tar.xz && cd bluez-5.47
 ```
 5. Configure Bluez project:
 ```sh
