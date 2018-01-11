@@ -22,6 +22,7 @@ The TinyB transport brings support for:
 ## Prerequisites
 
 You must upgrade your Bluez software to 5.43+. This is due to some changes in the DBus API in Bluez 5.43v.
+**UPDATE**: The new Bluez version 5.48 is not recommended as it is not yet supported by TinyB library. See: https://github.com/intel-iot-devkit/tinyb/issues/131 
 
 You can use systemctl utility to check which Bluez version you are running:
 ```sh
