@@ -35,12 +35,14 @@ final class NativesLoader {
 
     private NativesLoader() { }
 
-    static String prepare(String library) throws IOException {
+    static String prepare(String library) throws IOException, UnsupportedOperationException {
         if (!isLinux()) {
             throw new IllegalStateException("Operation system is not suported: " + getOsName());
         }
+
         String libraryPath = getLibFolder() + "/" + library;
         BufferedInputStream tinyBClasspathStream = null;
+
         try {
             tinyBClasspathStream = new BufferedInputStream(NativesLoader.class.getResourceAsStream(libraryPath), 1000);
             File lib = new File(createTempDirectory(), new File(library).getName());
@@ -56,18 +58,22 @@ final class NativesLoader {
 
     static boolean isSupportedEnvironment() {
         //TODO add some checks for Bluez versions, e.g. that it is greater than v4.43
-        return isLinux();
+        return isLinux() && (isARM6() || isX86_64() || isX86_32());
     }
 
-    static String getLibFolder() {
-        if (isARM()) {
+    static String getLibFolder() throws UnsupportedOperationException {
+        if (isARM6()) {
             return "/native/arm/armv6";
+        } else if (isX86_64()) {
+            return "/native/linux/x86_64";
+        } else if (isX86_32()) {
+            return "/native/linux/x86_32";
         } else {
-            return is64Bit() ? "/native/linux/x86_64" : "/native/linux/x86_32";
+            throw new UnsupportedOperationException("Unsupported platform");
         }
     }
 
-    static boolean isARM() {
+    static boolean isARM6() {
         return getOsArch().startsWith("arm");
     }
 
@@ -75,9 +81,14 @@ final class NativesLoader {
         return getOsName().startsWith("linux");
     }
 
-    static boolean is64Bit() {
+    static boolean isX86_64() {
         String osArch = getOsArch();
         return osArch.startsWith("x86_64") || osArch.startsWith("amd64");
+    }
+
+    static boolean isX86_32() {
+        String osArch = getOsArch();
+        return "x86".equals(osArch) || osArch.startsWith("i686") || osArch.startsWith("i586") || osArch.startsWith("i486") || osArch.startsWith("i386");
     }
 
     private static String getOsName() {
