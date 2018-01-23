@@ -32,6 +32,7 @@ import tinyb.BluetoothGattService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class representing TinyB devices.
@@ -189,4 +190,15 @@ class TinyBDevice implements Device {
 
     @Override
     public void dispose() { /* do nothing */ }
+
+    @Override
+    public Map<String, byte[]> getServiceData() {
+        return device.getServiceData();
+    }
+
+    @Override
+    public Map<Short, byte[]> getManufacturerData() {
+        return device.getManufacturerData();
+    }
+
 }
