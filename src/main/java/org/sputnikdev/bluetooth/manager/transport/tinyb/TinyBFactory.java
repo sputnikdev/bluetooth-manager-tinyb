@@ -55,23 +55,53 @@ public class TinyBFactory implements BluetoothObjectFactory {
     private static final ExecutorService NOTIFICATION_SERVICE = Executors.newCachedThreadPool();
 
     /**
-     * Loads TinyB native libraries from classpath by copying them to a temp folder.
+     * Loads TinyB bundeled native libraries from classpath by copying them to a temp folder.
      * @return true if all libraries succesefully loaded, false otherwise
      */
-    public static boolean loadNativeLibraries() {
-        if (NativesLoader.isSupportedEnvironment()) {
+    private static boolean loadBundeledNativeLibraries() {
+        if (!NativesLoader.isSupportedEnvironment()) {
+            return false;
+        }
+
+        final String[] libs = {"libtinyb.so", "libjavatinyb.so"};
+        for (String lib : libs) {
             try {
-                System.load(NativesLoader.prepare("libtinyb.so")); // $COVERAGE-IGNORE$
-                System.load(NativesLoader.prepare("libjavatinyb.so")); // $COVERAGE-IGNORE$
-                return true; // $COVERAGE-IGNORE$
+                System.load(NativesLoader.prepare(lib)); // $COVERAGE-IGNORE$
             } catch (Throwable e) {
-                LOGGER.info("Could not load TinyB native libraries.", e);
+                LOGGER.info("Could not load bundled TinyB native libraries.", e);
                 return false;
             }
         }
-        LOGGER.info("TinyB: environemnt is not supported. Only Linux OS; x86, x86_64 and arm6 architectures; "
-            + "are supported.");
-        return false;
+        return true; // $COVERAGE-IGNORE$
+    }
+
+    /**
+     * Loads TinyB native libraries from system paths.
+     * @return true if all libraries succesefully loaded, false otherwise
+     */
+    private static boolean loadSystemNativeLibraries() {
+        LOGGER.info("TinyB: environment is not supported out of the box. Attempting to load system libs.");
+
+        final String[] libs = {"tinyb", "javatinyb"};
+        for (String lib : libs) {
+            try {
+                System.loadLibrary(lib); // $COVERAGE-IGNORE$
+            } catch (Throwable e) {
+                LOGGER.info("TinyB: Could not load system libraries. Thus, environemnt is not supported. "
+                    + "Only Linux OS; x86, x86_64 and arm6 architectures are supported out of the box. Consider "
+                    + "providing own " + lib + ". in one of " + System.getProperty("java.library.path"), e);
+                return false;
+            }
+        }
+        return true; // $COVERAGE-IGNORE$
+    }
+
+    /**
+     * Loads TinyB native libraries (either bundeled or system ones).
+     * @return true if all libraries succesefully loaded, false otherwise
+     */
+    public static boolean loadNativeLibraries() {
+        return loadBundeledNativeLibraries() || loadSystemNativeLibraries();
     }
 
     @Override
