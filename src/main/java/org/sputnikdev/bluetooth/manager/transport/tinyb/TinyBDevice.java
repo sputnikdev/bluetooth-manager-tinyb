@@ -23,6 +23,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.BluetoothAddressType;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
@@ -189,4 +190,10 @@ class TinyBDevice implements Device {
 
     @Override
     public void dispose() { /* do nothing */ }
+
+    @Override
+    public BluetoothAddressType getAddressType() {
+        //TODO it is not yet implemented in TinyB, but quite possible to implement.
+        return BluetoothAddressType.UNKNOWN;
+    }
 }

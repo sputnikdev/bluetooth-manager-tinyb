@@ -19,6 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.BluetoothAddressType;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothAdapter;
@@ -319,6 +320,12 @@ public class TinyBDeviceTest {
         assertTrue(tinyBDevice.isBleEnabled());
         when(bluetoothDevice.getBluetoothClass()).thenReturn(1);
         assertFalse(tinyBDevice.isBleEnabled());
+    }
+
+    @Test
+    public void testGetAddressType() {
+        //TODO it is not yet implemented in TinyB, but quite possible to implement.
+        assertEquals(BluetoothAddressType.UNKNOWN, tinyBDevice.getAddressType());
     }
 
 }
