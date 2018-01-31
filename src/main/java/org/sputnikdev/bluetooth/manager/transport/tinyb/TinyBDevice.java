@@ -23,6 +23,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.URL;
+import org.sputnikdev.bluetooth.manager.BluetoothAddressType;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
@@ -199,6 +200,40 @@ class TinyBDevice implements Device {
     @Override
     public Map<Short, byte[]> getManufacturerData() {
         return device.getManufacturerData();
+    }
+
+    @Override
+    public BluetoothAddressType getAddressType() {
+        //TODO it is not yet implemented in TinyB, but quite possible to implement.
+        return BluetoothAddressType.UNKNOWN;
+    }
+
+    @Override
+    public void enableServiceDataNotifications(Notification<Map<String, byte[]>> notification) {
+        device.enableServiceDataNotifications(value -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(value);
+            }, LOGGER, "Service data notification execution error");
+        });
+    }
+
+    @Override
+    public void disableServiceDataNotifications() {
+        device.disableServiceDataNotifications();
+    }
+
+    @Override
+    public void enableManufacturerDataNotifications(Notification<Map<Short, byte[]>> notification) {
+        device.enableManufacturerDataNotifications(value -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(value);
+            }, LOGGER, "Manufacturer data notification execution error");
+        });
+    }
+
+    @Override
+    public void disableManufacturerDataNotifications() {
+        device.disableManufacturerDataNotifications();
     }
 
 }
