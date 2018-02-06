@@ -36,6 +36,7 @@ import tinyb.BluetoothGattService;
 import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -118,14 +119,28 @@ public class TinyBFactory implements BluetoothObjectFactory {
 
     @Override
     public List<DiscoveredAdapter> getDiscoveredAdapters() {
-        return BluetoothManager.getBluetoothManager().getAdapters().stream().map(
-                TinyBFactory::convert).collect(Collectors.toList());
+        try {
+            return BluetoothManager.getBluetoothManager().getAdapters().stream().map(
+                    TinyBFactory::convert).collect(Collectors.toList());
+        } catch (tinyb.BluetoothException ex) {
+            if ("No adapter installed or not recognized by system".equals(ex.getMessage())) {
+                return Collections.emptyList();
+            }
+            throw ex;
+        }
     }
 
     @Override
     public List<DiscoveredDevice> getDiscoveredDevices() {
-        return BluetoothManager.getBluetoothManager().getDevices().stream().map(
-                TinyBFactory::convert).collect(Collectors.toList());
+        try {
+            return BluetoothManager.getBluetoothManager().getDevices().stream().map(
+                    TinyBFactory::convert).collect(Collectors.toList());
+        } catch (tinyb.BluetoothException ex) {
+            if ("No adapter installed or not recognized by system".equals(ex.getMessage())) {
+                return Collections.emptyList();
+            }
+            throw ex;
+        }
     }
 
     @Override
@@ -141,11 +156,14 @@ public class TinyBFactory implements BluetoothObjectFactory {
      */
     public void dispose() {
         try {
-            BluetoothManager.getBluetoothManager().stopDiscovery();
-        } catch (Exception ignore) { }
-        BluetoothManager.getBluetoothManager().getServices().forEach(TinyBFactory::closeSilently);
-        BluetoothManager.getBluetoothManager().getDevices().forEach(TinyBFactory::closeSilently);
-        BluetoothManager.getBluetoothManager().getAdapters().forEach(TinyBFactory::closeSilently);
+            BluetoothManager bluetoothManager = BluetoothManager.getBluetoothManager();
+            bluetoothManager.stopDiscovery();
+            bluetoothManager.getServices().forEach(TinyBFactory::closeSilently);
+            bluetoothManager.getDevices().forEach(TinyBFactory::closeSilently);
+            bluetoothManager.getAdapters().forEach(TinyBFactory::closeSilently);
+        } catch (Exception ex) {
+            LOGGER.debug("Error occurred while disposing TinyB manager: {}", ex.getMessage());
+        }
     }
 
     static void notifySafely(Runnable noticator, Logger logger, String errorMessage) {

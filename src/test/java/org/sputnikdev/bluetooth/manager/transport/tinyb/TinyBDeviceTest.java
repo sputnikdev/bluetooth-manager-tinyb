@@ -304,7 +304,7 @@ public class TinyBDeviceTest {
         assertEquals(URL.copyWith(SERVICE_2_UUID, null), services.get(1).getURL());
 
         when(bluetoothDevice.getConnected()).thenReturn(false);
-        assertNull(tinyBDevice.getServices());
+        assertEquals(2, services.size());
     }
 
     @Test
