@@ -179,7 +179,7 @@ class TinyBDevice implements Device {
     @Override
     public List<Service> getServices() {
         if (!device.getConnected()) {
-            return null;
+            return Collections.emptyList();
         }
         List<BluetoothGattService> services = device.getServices();
         List<Service> result = new ArrayList<>(services.size());
@@ -207,4 +207,33 @@ class TinyBDevice implements Device {
         //TODO it is not yet implemented in TinyB, but quite possible to implement.
         return BluetoothAddressType.UNKNOWN;
     }
+
+    @Override
+    public void enableServiceDataNotifications(Notification<Map<String, byte[]>> notification) {
+        device.enableServiceDataNotifications(value -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(value);
+            }, LOGGER, "Service data notification execution error");
+        });
+    }
+
+    @Override
+    public void disableServiceDataNotifications() {
+        device.disableServiceDataNotifications();
+    }
+
+    @Override
+    public void enableManufacturerDataNotifications(Notification<Map<Short, byte[]>> notification) {
+        device.enableManufacturerDataNotifications(value -> {
+            TinyBFactory.notifySafely(() -> {
+                notification.notify(value);
+            }, LOGGER, "Manufacturer data notification execution error");
+        });
+    }
+
+    @Override
+    public void disableManufacturerDataNotifications() {
+        device.disableManufacturerDataNotifications();
+    }
+
 }

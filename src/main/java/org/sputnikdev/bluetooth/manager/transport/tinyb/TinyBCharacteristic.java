@@ -125,7 +125,15 @@ class TinyBCharacteristic implements Characteristic {
 
     @Override
     public byte[] readValue() {
-        return characteristic.readValue();
+        try {
+            return characteristic.readValue();
+        } catch (RuntimeException ex) {
+            // a workaround for a TinyB bug/issue: https://github.com/intel-iot-devkit/tinyb/issues/140
+            if ("Trying to read empty value".equals(ex.getMessage())) {
+                return new byte[] { };
+            }
+            throw ex;
+        }
     }
 
     @Override
