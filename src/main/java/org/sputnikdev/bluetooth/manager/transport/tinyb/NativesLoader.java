@@ -91,11 +91,11 @@ final class NativesLoader {
         return "x86".equals(osArch) || osArch.startsWith("i686") || osArch.startsWith("i586") || osArch.startsWith("i486") || osArch.startsWith("i386");
     }
 
-    private static String getOsName() {
+    static String getOsName() {
         return System.getProperty("os.name").toLowerCase();
     }
 
-    private static String getOsArch() {
+    static String getOsArch() {
         return System.getProperty("os.arch").toLowerCase();
     }
 
