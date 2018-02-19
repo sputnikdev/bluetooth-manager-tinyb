@@ -41,15 +41,17 @@ class TinyBAdapter implements Adapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinyBAdapter.class);
 
+    private final URL url;
     private final BluetoothAdapter adapter;
 
-    TinyBAdapter(BluetoothAdapter adapter) {
+    TinyBAdapter(URL url, BluetoothAdapter adapter) {
+        this.url = url;
         this.adapter = adapter;
     }
 
     @Override
     public URL getURL() {
-        return new URL(TinyBFactory.TINYB_PROTOCOL_NAME, adapter.getAddress(), null);
+        return url;
     }
 
     @Override
@@ -127,12 +129,20 @@ class TinyBAdapter implements Adapter {
         List<Device> result = new ArrayList<>(devices.size());
         for (BluetoothDevice device : devices) {
             if (device.getRSSI() != 0) {
-                result.add(new TinyBDevice(device));
+                result.add(new TinyBDevice(url.copyWithDevice(device.getAddress()), device));
             }
         }
         return Collections.unmodifiableList(result);
     }
 
-    @Override
-    public void dispose() { /* do nothing */ }
+    protected static void dispose(BluetoothAdapter adapter) {
+        LOGGER.debug("Disposing adapter: {}", adapter.getAddress());
+        TinyBFactory.runSilently(adapter::stopDiscovery);
+        adapter.getDevices().forEach(TinyBDevice::dispose);
+        TinyBFactory.runSilently(adapter::disableDiscoveringNotifications);
+        TinyBFactory.runSilently(adapter::disablePoweredNotifications);
+        TinyBFactory.runSilently(adapter::disableDiscoverableNotifications);
+        TinyBFactory.runSilently(adapter::disablePairableNotifications);
+    }
+
 }

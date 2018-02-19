@@ -155,13 +155,13 @@ public class TinyBFactoryTest {
     @Test
     public void testGetDiscoveredAdapters() throws Exception {
         assertEquals(1, tinyBFactory.getDiscoveredAdapters().size());
-        assertEquals(ADAPTER, tinyBFactory.getDiscoveredAdapters().get(0).getURL());
+        assertEquals(ADAPTER, tinyBFactory.getDiscoveredAdapters().iterator().next().getURL());
     }
 
     @Test
     public void testGetDiscoveredDevices() throws Exception {
         assertEquals(1, tinyBFactory.getDiscoveredDevices().size());
-        assertEquals(DEVICE, tinyBFactory.getDiscoveredDevices().get(0).getURL());
+        assertEquals(DEVICE, tinyBFactory.getDiscoveredDevices().iterator().next().getURL());
     }
 
     @Test

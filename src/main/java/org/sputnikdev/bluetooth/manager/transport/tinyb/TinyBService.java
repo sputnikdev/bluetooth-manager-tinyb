@@ -38,17 +38,17 @@ import java.util.List;
  */
 class TinyBService implements Service {
 
+    private final URL url;
     private final BluetoothGattService service;
 
-    TinyBService(BluetoothGattService service) {
+    TinyBService(URL url, BluetoothGattService service) {
+        this.url = url;
         this.service = service;
     }
 
     @Override
     public URL getURL() {
-        BluetoothDevice device = service.getDevice();
-        return new URL(TinyBFactory.TINYB_PROTOCOL_NAME, device.getAdapter().getAddress(),
-                device.getAddress(), service.getUUID(), null, null);
+        return url;
     }
 
     @Override
@@ -56,13 +56,10 @@ class TinyBService implements Service {
         List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
         List<Characteristic> result = new ArrayList<>(characteristics.size());
         for (BluetoothGattCharacteristic nativeCharacteristic : characteristics) {
-            result.add(new TinyBCharacteristic(nativeCharacteristic));
+            result.add(new TinyBCharacteristic(
+                    url.copyWithCharacteristic(nativeCharacteristic.getUUID()),nativeCharacteristic));
         }
         return Collections.unmodifiableList(result);
     }
 
-    @Override
-    public void dispose() {
-        // do nothing
-    }
 }

@@ -72,18 +72,17 @@ class TinyBCharacteristic implements Characteristic {
         }
     }
 
+    private final URL url;
     private final BluetoothGattCharacteristic characteristic;
 
-    TinyBCharacteristic(BluetoothGattCharacteristic characteristic) {
+    TinyBCharacteristic(URL url, BluetoothGattCharacteristic characteristic) {
+        this.url = url;
         this.characteristic = characteristic;
     }
 
     @Override
     public URL getURL() {
-        BluetoothGattService service = characteristic.getService();
-        BluetoothDevice device = service.getDevice();
-        return new URL(TinyBFactory.TINYB_PROTOCOL_NAME, device.getAdapter().getAddress(), device.getAddress(),
-                service.getUUID(), characteristic.getUUID(), null);
+        return url;
     }
 
     @Override
@@ -155,6 +154,4 @@ class TinyBCharacteristic implements Characteristic {
         return characteristic.writeValue(bytes);
     }
 
-    @Override
-    public void dispose() { /* do nothing */ }
 }

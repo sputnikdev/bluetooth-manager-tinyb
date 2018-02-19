@@ -43,15 +43,17 @@ class TinyBDevice implements Device {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinyBDevice.class);
 
+    private final URL url;
     private final BluetoothDevice device;
 
-    TinyBDevice(BluetoothDevice device) {
+    TinyBDevice(URL url, BluetoothDevice device) {
+        this.url = url;
         this.device = device;
     }
 
     @Override
     public URL getURL() {
-        return new URL(TinyBFactory.TINYB_PROTOCOL_NAME, device.getAdapter().getAddress(), device.getAddress());
+        return url;
     }
 
     @Override
@@ -184,13 +186,10 @@ class TinyBDevice implements Device {
         List<BluetoothGattService> services = device.getServices();
         List<Service> result = new ArrayList<>(services.size());
         for (BluetoothGattService nativeService : services) {
-            result.add(new TinyBService(nativeService));
+            result.add(new TinyBService(url.copyWithService(nativeService.getUUID()), nativeService));
         }
         return Collections.unmodifiableList(result);
     }
-
-    @Override
-    public void dispose() { /* do nothing */ }
 
     @Override
     public Map<String, byte[]> getServiceData() {
@@ -234,6 +233,21 @@ class TinyBDevice implements Device {
     @Override
     public void disableManufacturerDataNotifications() {
         device.disableManufacturerDataNotifications();
+    }
+
+    protected static void dispose(BluetoothDevice device) {
+        LOGGER.debug("Disposing device: {}", device.getAddress());
+        TinyBFactory.runSilently(device::disconnect);
+        TinyBFactory.runSilently(device::disableBlockedNotifications);
+        TinyBFactory.runSilently(device::disableConnectedNotifications);
+        TinyBFactory.runSilently(device::disableRSSINotifications);
+        TinyBFactory.runSilently(device::disableServicesResolvedNotifications);
+        TinyBFactory.runSilently(device::disableManufacturerDataNotifications);
+        TinyBFactory.runSilently(device::disablePairedNotifications);
+        TinyBFactory.runSilently(device::disableServiceDataNotifications);
+        TinyBFactory.runSilently(device::disableTrustedNotifications);
+        // removing device causing unstable behaviour with TinyB (or maybe Bluez?)
+        //TinyBFactory.runSilently(device::remove);
     }
 
 }

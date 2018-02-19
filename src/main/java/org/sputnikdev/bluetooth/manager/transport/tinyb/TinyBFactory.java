@@ -37,8 +37,8 @@ import tinyb.BluetoothManager;
 import tinyb.BluetoothType;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -109,7 +109,7 @@ public class TinyBFactory implements BluetoothObjectFactory {
     public Adapter getAdapter(URL url) {
         BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.ADAPTER, null, url.getAdapterAddress(), null);
-        return adapter != null ? new TinyBAdapter(adapter) : null;
+        return adapter != null ? new TinyBAdapter(url.getAdapterURL(), adapter) : null;
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TinyBFactory implements BluetoothObjectFactory {
         }
         BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
                 BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
-        return device != null ? new TinyBDevice(device) : null;
+        return device != null ? new TinyBDevice(url.getDeviceURL(), device) : null;
     }
 
     @Override
@@ -144,30 +144,30 @@ public class TinyBFactory implements BluetoothObjectFactory {
         BluetoothGattCharacteristic characteristic = (BluetoothGattCharacteristic)
                 BluetoothManager.getBluetoothManager().getObject(
                         BluetoothType.GATT_CHARACTERISTIC, null, url.getCharacteristicUUID(), service);
-        return characteristic != null ? new TinyBCharacteristic(characteristic) : null;
+        return characteristic != null ? new TinyBCharacteristic(url.getCharacteristicURL(), characteristic) : null;
     }
 
     @Override
-    public List<DiscoveredAdapter> getDiscoveredAdapters() {
+    public Set<DiscoveredAdapter> getDiscoveredAdapters() {
         try {
             return BluetoothManager.getBluetoothManager().getAdapters().stream().map(
-                    TinyBFactory::convert).collect(Collectors.toList());
+                    TinyBFactory::convert).collect(Collectors.toSet());
         } catch (tinyb.BluetoothException ex) {
             if ("No adapter installed or not recognized by system".equals(ex.getMessage())) {
-                return Collections.emptyList();
+                return Collections.emptySet();
             }
             throw ex;
         }
     }
 
     @Override
-    public List<DiscoveredDevice> getDiscoveredDevices() {
+    public Set<DiscoveredDevice> getDiscoveredDevices() {
         try {
             return BluetoothManager.getBluetoothManager().getDevices().stream().map(
-                    TinyBFactory::convert).collect(Collectors.toList());
+                    TinyBFactory::convert).collect(Collectors.toSet());
         } catch (tinyb.BluetoothException ex) {
             if ("No adapter installed or not recognized by system".equals(ex.getMessage())) {
-                return Collections.emptyList();
+                return Collections.emptySet();
             }
             throw ex;
         }
@@ -194,6 +194,28 @@ public class TinyBFactory implements BluetoothObjectFactory {
         } catch (Exception ex) {
             LOGGER.debug("Error occurred while disposing TinyB manager: {}", ex.getMessage());
         }
+    }
+
+    @Override
+    public void dispose(URL url) {
+        LOGGER.debug("Bluetooth object disposal requested: {}", url);
+        BluetoothAdapter adapter = (BluetoothAdapter) BluetoothManager.getBluetoothManager().getObject(
+                BluetoothType.ADAPTER, null, url.getAdapterAddress(), null);
+        if (url.isAdapter()) {
+            TinyBAdapter.dispose(adapter);
+        } else if (url.isDevice() || url.isCharacteristic()) {
+            BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
+                    BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
+            if (device != null) {
+                TinyBDevice.dispose(device);
+            }
+        }
+    }
+
+    static void runSilently(Runnable func) {
+        try {
+            func.run();
+        } catch (Exception ignore) { /* do nothing */ }
     }
 
     static void notifySafely(Runnable noticator, Logger logger, String errorMessage) {
