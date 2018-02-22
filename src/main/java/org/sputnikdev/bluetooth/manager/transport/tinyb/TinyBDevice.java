@@ -246,8 +246,7 @@ class TinyBDevice implements Device {
         TinyBFactory.runSilently(device::disablePairedNotifications);
         TinyBFactory.runSilently(device::disableServiceDataNotifications);
         TinyBFactory.runSilently(device::disableTrustedNotifications);
-        // removing device causing unstable behaviour with TinyB (or maybe Bluez?)
-        //TinyBFactory.runSilently(device::remove);
+        TinyBFactory.runSilently(device::remove);
     }
 
 }

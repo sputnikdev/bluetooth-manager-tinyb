@@ -207,7 +207,11 @@ public class TinyBFactory implements BluetoothObjectFactory {
             BluetoothDevice device = (BluetoothDevice) BluetoothManager.getBluetoothManager().getObject(
                     BluetoothType.DEVICE, null, url.getDeviceAddress(), adapter);
             if (device != null) {
-                TinyBDevice.dispose(device);
+                if (url.isDevice()) {
+                    TinyBDevice.dispose(device);
+                } else {
+                    runSilently(device::disconnect);
+                }
             }
         }
     }
