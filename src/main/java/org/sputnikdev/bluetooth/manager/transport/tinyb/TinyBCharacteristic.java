@@ -26,9 +26,7 @@ import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
-import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattCharacteristic;
-import tinyb.BluetoothGattService;
 
 import java.util.Objects;
 import java.util.Set;
@@ -41,6 +39,7 @@ import java.util.stream.Stream;
  */
 class TinyBCharacteristic implements Characteristic {
 
+    private static final String CONFIGURATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
     private static final Logger LOGGER = LoggerFactory.getLogger(TinyBCharacteristic.class);
 
     private enum AccessTypeMapping {
@@ -154,4 +153,9 @@ class TinyBCharacteristic implements Characteristic {
         return characteristic.writeValue(bytes);
     }
 
+    @Override
+    public boolean isNotificationConfigurable() {
+        return characteristic.getDescriptors().stream()
+                .filter(descriptor -> CONFIGURATION_UUID.equalsIgnoreCase(descriptor.getUUID())).count() > 0;
+    }
 }
