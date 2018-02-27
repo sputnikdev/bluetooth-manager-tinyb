@@ -58,36 +58,43 @@ class TinyBDevice implements Device {
 
     @Override
     public int getBluetoothClass() {
+        LOGGER.debug("Getting bluetooth class: {}", url);
         return device.getBluetoothClass();
     }
 
     @Override
     public boolean disconnect() {
+        LOGGER.debug("Disconnecting: {}", url);
         return device.disconnect();
     }
 
     @Override
     public boolean connect() {
+        LOGGER.debug("Connecting: {}", url);
         return device.connect();
     }
 
     @Override
     public String getName() {
+        LOGGER.debug("Getting name: {}", url);
         return device.getName();
     }
 
     @Override
     public String getAlias() {
+        LOGGER.debug("Getting alias: {}", url);
         return device.getAlias();
     }
 
     @Override
     public void setAlias(String alias) {
+        LOGGER.debug("Setting alias: {} / {}", url, alias);
         device.setAlias(alias);
     }
 
     @Override
     public boolean isBlocked() {
+        LOGGER.debug("Getting blocked: {}", url);
         return device.getBlocked();
     }
 
@@ -99,6 +106,7 @@ class TinyBDevice implements Device {
 
     @Override
     public void enableBlockedNotifications(Notification<Boolean> notification) {
+        LOGGER.debug("Enable blocked notifications: {}", url);
         device.enableBlockedNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -108,26 +116,31 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableBlockedNotifications() {
+        LOGGER.debug("Disable blocked notifications: {}", url);
         device.disableBlockedNotifications();
     }
 
     @Override
     public void setBlocked(boolean blocked) {
+        LOGGER.debug("Setting blocked: {} : {}", url, blocked);
         device.setBlocked(blocked);
     }
 
     @Override
     public short getRSSI() {
+        LOGGER.debug("Getting RSSI: {}", url);
         return device.getRSSI();
     }
 
     @Override
     public short getTxPower() {
+        LOGGER.debug("Getting TxPower: {}", url);
         return device.getTxPower();
     }
 
     @Override
     public void enableRSSINotifications(Notification<Short> notification) {
+        LOGGER.debug("Enable RSSI notifications: {}", url);
         device.enableRSSINotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -137,16 +150,19 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableRSSINotifications() {
+        LOGGER.debug("Disable RSSI notifications: {}", url);
         device.disableRSSINotifications();
     }
 
     @Override
     public boolean isConnected() {
+        LOGGER.debug("Checking if device connected: {}", url);
         return device.getConnected();
     }
 
     @Override
     public void enableConnectedNotifications(Notification<Boolean> notification) {
+        LOGGER.debug("Enable connected notifications: {}", url);
         device.enableConnectedNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -156,16 +172,19 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableConnectedNotifications() {
+        LOGGER.debug("Disable connected notifications: {}", url);
         device.disableConnectedNotifications();
     }
 
     @Override
     public boolean isServicesResolved() {
+        LOGGER.debug("Is services resolved?: {}", url);
         return device.getServicesResolved();
     }
 
     @Override
     public void enableServicesResolvedNotifications(Notification<Boolean> notification) {
+        LOGGER.debug("Enable service resolved notifications: {}", url);
         device.enableServicesResolvedNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -175,11 +194,13 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableServicesResolvedNotifications() {
+        LOGGER.debug("Disable service resolved notifications: {}", url);
         device.disableServicesResolvedNotifications();
     }
 
     @Override
     public List<Service> getServices() {
+        LOGGER.debug("Getting resolved services: {}", url);
         if (!device.getConnected()) {
             return Collections.emptyList();
         }
@@ -193,11 +214,13 @@ class TinyBDevice implements Device {
 
     @Override
     public Map<String, byte[]> getServiceData() {
+        LOGGER.debug("Getting service data: {}", url);
         return device.getServiceData();
     }
 
     @Override
     public Map<Short, byte[]> getManufacturerData() {
+        LOGGER.debug("Getting manufacturer data: {}", url);
         return device.getManufacturerData();
     }
 
@@ -209,6 +232,7 @@ class TinyBDevice implements Device {
 
     @Override
     public void enableServiceDataNotifications(Notification<Map<String, byte[]>> notification) {
+        LOGGER.debug("Enable service data notifications: {}", url);
         device.enableServiceDataNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -218,11 +242,13 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableServiceDataNotifications() {
+        LOGGER.debug("Disable service data notifications: {}", url);
         device.disableServiceDataNotifications();
     }
 
     @Override
     public void enableManufacturerDataNotifications(Notification<Map<Short, byte[]>> notification) {
+        LOGGER.debug("Enable manufacturer data notifications: {}", url);
         device.enableManufacturerDataNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -232,6 +258,7 @@ class TinyBDevice implements Device {
 
     @Override
     public void disableManufacturerDataNotifications() {
+        LOGGER.debug("Disable manufacturer data notifications: {}", url);
         device.disableManufacturerDataNotifications();
     }
 
