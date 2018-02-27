@@ -21,6 +21,7 @@ import tinyb.BluetoothGattService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -39,15 +40,14 @@ public class TinyBServiceTest {
     private static final URL URL = new URL(TinyBFactory.TINYB_PROTOCOL_NAME, ADAPTER_MAC, DEVICE_MAC,
             SERVICE_UUID, null, null);
 
-    @Mock
-    private BluetoothGattService bluetoothGattService;
+    private BluetoothGattService bluetoothGattService = mock(BluetoothGattService.class);
     @Mock
     private BluetoothDevice bluetoothDevice;
     @Mock
     private BluetoothAdapter bluetoothAdapter;
 
     @InjectMocks
-    private TinyBService tinyBService;
+    private TinyBService tinyBService = new TinyBService(URL, bluetoothGattService);
 
     @Before
     public void setUp() {
@@ -73,11 +73,7 @@ public class TinyBServiceTest {
     @Test
     public void testGetURL() throws Exception {
         assertEquals(URL, tinyBService.getURL());
-        verify(bluetoothAdapter, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAdapter();
-        verify(bluetoothGattService, times(1)).getUUID();
-        verify(bluetoothGattService, times(1)).getDevice();
+        verify(bluetoothGattService, never()).getUUID();
     }
 
     @Test

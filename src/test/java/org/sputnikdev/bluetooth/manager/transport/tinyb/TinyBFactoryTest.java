@@ -94,7 +94,6 @@ public class TinyBFactoryTest {
     @Test
     public void testGetAdapter() throws Exception {
         assertEquals(ADAPTER, tinyBFactory.getAdapter(ADAPTER).getURL());
-        verify(adapter, times(1)).getAddress();
 
         when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
                 ADAPTER.getAdapterAddress(), null)).thenReturn(null);
@@ -104,7 +103,6 @@ public class TinyBFactoryTest {
     @Test
     public void testGetDevice() throws Exception {
         assertEquals(DEVICE, tinyBFactory.getDevice(DEVICE).getURL());
-        verify(device, times(1)).getAddress();
 
         when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
                 ADAPTER.getAdapterAddress(), null)).thenReturn(null);
@@ -121,7 +119,6 @@ public class TinyBFactoryTest {
     public void testGetCharacteristic() throws Exception {
         when(device.getConnected()).thenReturn(true);
         assertEquals(CHARACTERISTIC, tinyBFactory.getCharacteristic(CHARACTERISTIC).getURL());
-        verify(characteristic, times(1)).getUUID();
 
         when(bluetoothManager.getObject(BluetoothType.ADAPTER, null,
                 ADAPTER.getAdapterAddress(), null)).thenReturn(null);

@@ -16,6 +16,8 @@ import org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.*;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -47,13 +49,15 @@ public class TinyBCharacteristicTest {
     private BluetoothDevice bluetoothDevice;
     @Mock
     private BluetoothGattService bluetoothGattService;
-    @Mock
-    private BluetoothGattCharacteristic bluetoothGattCharacteristic;
+
+    private BluetoothGattCharacteristic bluetoothGattCharacteristic = mock(BluetoothGattCharacteristic.class);
     @Mock
     private ExecutorService fakeExecutorService;
+    @Mock
+    private BluetoothGattDescriptor notificationDescriptor;
 
     @InjectMocks
-    private TinyBCharacteristic tinyBCharacteristic;
+    private TinyBCharacteristic tinyBCharacteristic = new TinyBCharacteristic(URL, bluetoothGattCharacteristic);
 
     @Before
     public void setUp() throws Exception {
@@ -76,18 +80,14 @@ public class TinyBCharacteristicTest {
         when(bluetoothGattCharacteristic.getNotifying()).thenReturn(NOTIFYING);
         when(bluetoothGattCharacteristic.readValue()).thenReturn(VALUE);
         when(bluetoothGattCharacteristic.writeValue(VALUE)).thenReturn(true);
+
+        when(notificationDescriptor.getUUID()).thenReturn("00002902-0000-1000-8000-00805f9b34fb");
     }
 
     @Test
     public void testGetURL() throws Exception {
         assertEquals(URL, tinyBCharacteristic.getURL());
-        verify(bluetoothAdapter, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAdapter();
-        verify(bluetoothGattService, times(1)).getUUID();
-        verify(bluetoothGattService, times(1)).getDevice();
-        verify(bluetoothGattCharacteristic, times(1)).getUUID();
-        verify(bluetoothGattCharacteristic, times(1)).getService();
+        verify(bluetoothGattCharacteristic, never()).getUUID();
     }
 
     @Test
@@ -147,5 +147,18 @@ public class TinyBCharacteristicTest {
     public void testDispose() {
         //tinyBCharacteristic.dispose();
         verifyNoMoreInteractions(bluetoothAdapter, bluetoothDevice, bluetoothGattService, bluetoothGattCharacteristic);
+    }
+
+    @Test
+    public void testIsNotificationConfigurable() {
+        when(bluetoothGattCharacteristic.getFlags()).thenReturn(new String[]{});
+
+        assertFalse(tinyBCharacteristic.isNotificationConfigurable());
+
+        when(bluetoothGattCharacteristic.getFlags()).thenReturn(FLAGS);
+        assertFalse(tinyBCharacteristic.isNotificationConfigurable());
+
+        when(bluetoothGattCharacteristic.getDescriptors()).thenReturn(Arrays.asList(notificationDescriptor));
+        assertTrue(tinyBCharacteristic.isNotificationConfigurable());
     }
 }

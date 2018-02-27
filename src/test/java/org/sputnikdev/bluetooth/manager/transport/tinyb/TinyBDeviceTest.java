@@ -1,12 +1,5 @@
 package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +20,15 @@ import tinyb.BluetoothDevice;
 import tinyb.BluetoothGattService;
 import tinyb.BluetoothNotification;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -38,6 +37,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -66,13 +66,13 @@ public class TinyBDeviceTest {
 
     @Mock
     private BluetoothAdapter bluetoothAdapter;
-    @Mock
-    private BluetoothDevice bluetoothDevice;
+
+    private BluetoothDevice bluetoothDevice = mock(BluetoothDevice.class);
     @Mock
     private ExecutorService fakeExecutorService;
 
     @InjectMocks
-    private TinyBDevice tinyBDevice;
+    private TinyBDevice tinyBDevice = new TinyBDevice(URL, bluetoothDevice);
 
     @Before
     public void setUp() throws Exception {
@@ -111,9 +111,7 @@ public class TinyBDeviceTest {
     @Test
     public void testGetURL() throws Exception {
         assertEquals(URL, tinyBDevice.getURL());
-        verify(bluetoothAdapter, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAddress();
-        verify(bluetoothDevice, times(1)).getAdapter();
+        verify(bluetoothDevice, never()).getAddress();
     }
 
     @Test

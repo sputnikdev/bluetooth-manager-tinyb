@@ -33,6 +33,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -55,14 +56,13 @@ public class TinyBAdapterTest {
 
     private static final URL URL = new URL(TinyBFactory.TINYB_PROTOCOL_NAME, MAC, null);
 
-    @Mock
-    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothAdapter bluetoothAdapter = mock(BluetoothAdapter.class);
 
     @Mock
     private ExecutorService fakeExecutorService;
 
     @InjectMocks
-    private TinyBAdapter tinyBAdapter;
+    private TinyBAdapter tinyBAdapter = new TinyBAdapter(URL, bluetoothAdapter);
 
     @Before
     public void setUp() throws Exception {
@@ -99,7 +99,7 @@ public class TinyBAdapterTest {
     @Test
     public void testGetURL() throws Exception {
         assertEquals(URL, tinyBAdapter.getURL());
-        verify(bluetoothAdapter, times(1)).getAddress();
+        verify(bluetoothAdapter, never()).getAddress();
     }
 
     @Test
