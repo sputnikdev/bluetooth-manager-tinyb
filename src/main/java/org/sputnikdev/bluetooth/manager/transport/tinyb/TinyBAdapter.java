@@ -66,6 +66,7 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void setAlias(String alias) {
+        LOGGER.debug("Set alias: {} : {}", url, alias);
         adapter.setAlias(alias);
     }
 
@@ -76,6 +77,7 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void enablePoweredNotifications(Notification<Boolean> notification) {
+        LOGGER.debug("Enable powered notifications: {}", url);
         adapter.enablePoweredNotifications(powered -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(powered);
@@ -85,11 +87,13 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void disablePoweredNotifications() {
+        LOGGER.debug("Disable powered notifications: {}", url);
         adapter.disablePoweredNotifications();
     }
 
     @Override
     public void setPowered(boolean powered) {
+        LOGGER.debug("Set powered: {} : {}", url, powered);
         adapter.setPowered(powered);
     }
 
@@ -100,6 +104,7 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void enableDiscoveringNotifications(Notification<Boolean> notification) {
+        LOGGER.debug("Enable discovering notifications: {}", url);
         adapter.enableDiscoveringNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
@@ -109,17 +114,20 @@ class TinyBAdapter implements Adapter {
 
     @Override
     public void disableDiscoveringNotifications() {
+        LOGGER.debug("Disable discovering notifications: {}", url);
         adapter.disableDiscoveringNotifications();
     }
 
     @Override
     public boolean startDiscovery() {
+        LOGGER.debug("Starting discovery: {}", url);
         adapter.setRssiDiscoveryFilter(-100);
         return adapter.startDiscovery();
     }
 
     @Override
     public boolean stopDiscovery() {
+        LOGGER.debug("Stopping discovery: {}", url);
         return adapter.stopDiscovery();
     }
 

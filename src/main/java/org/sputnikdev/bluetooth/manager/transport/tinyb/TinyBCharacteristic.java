@@ -123,6 +123,7 @@ class TinyBCharacteristic implements Characteristic {
 
     @Override
     public byte[] readValue() {
+        LOGGER.debug("Reading value: {}", url);
         try {
             return characteristic.readValue();
         } catch (RuntimeException ex) {
@@ -136,6 +137,7 @@ class TinyBCharacteristic implements Characteristic {
 
     @Override
     public void enableValueNotifications(Notification<byte[]> notification) {
+        LOGGER.debug("Enable value notifications: {}", url);
         characteristic.enableValueNotifications(bytes -> {
             TinyBFactory.notifySafely(() -> {
                 notification.notify(bytes);
@@ -145,11 +147,13 @@ class TinyBCharacteristic implements Characteristic {
 
     @Override
     public void disableValueNotifications() {
+        LOGGER.debug("Disable value notifications: {}", url);
         characteristic.disableValueNotifications();
     }
 
     @Override
     public boolean writeValue(byte[] bytes) {
+        LOGGER.debug("Writing value: {}", url);
         return characteristic.writeValue(bytes);
     }
 
