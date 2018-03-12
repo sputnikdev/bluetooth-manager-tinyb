@@ -22,6 +22,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sputnikdev.bluetooth.DataConversionUtils;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.BluetoothAddressType;
 import org.sputnikdev.bluetooth.manager.transport.Device;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A class representing TinyB devices.
@@ -235,6 +237,11 @@ class TinyBDevice implements Device {
         LOGGER.debug("Enable service data notifications: {}", url);
         device.enableServiceDataNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Service data changed: {} : {}", url, value.entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                    entry -> DataConversionUtils.convert(entry.getValue(), 16))));
+                }
                 notification.notify(value);
             }, LOGGER, "Service data notification execution error");
         });
@@ -251,6 +258,11 @@ class TinyBDevice implements Device {
         LOGGER.debug("Enable manufacturer data notifications: {}", url);
         device.enableManufacturerDataNotifications(value -> {
             TinyBFactory.notifySafely(() -> {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Manufacturer data changed: {} : {}", url, value.entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                    entry -> DataConversionUtils.convert(entry.getValue(), 16))));
+                }
                 notification.notify(value);
             }, LOGGER, "Manufacturer data notification execution error");
         });
