@@ -22,6 +22,7 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sputnikdev.bluetooth.DataConversionUtils;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.transport.Characteristic;
 import org.sputnikdev.bluetooth.manager.transport.CharacteristicAccessType;
@@ -125,7 +126,11 @@ class TinyBCharacteristic implements Characteristic {
     public byte[] readValue() {
         LOGGER.debug("Reading value: {}", url);
         try {
-            return characteristic.readValue();
+            byte[] value = characteristic.readValue();
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Value read: {} : {}", url, DataConversionUtils.convert(value, 16));
+            }
+            return value;
         } catch (RuntimeException ex) {
             // a workaround for a TinyB bug/issue: https://github.com/intel-iot-devkit/tinyb/issues/140
             if ("Trying to read empty value".equals(ex.getMessage())) {
@@ -140,6 +145,9 @@ class TinyBCharacteristic implements Characteristic {
         LOGGER.debug("Enable value notifications: {}", url);
         characteristic.enableValueNotifications(bytes -> {
             TinyBFactory.notifySafely(() -> {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Notification received: {} : {}", url, DataConversionUtils.convert(bytes, 16));
+                }
                 notification.notify(bytes);
             }, LOGGER, "Value notification execution error");
         });
