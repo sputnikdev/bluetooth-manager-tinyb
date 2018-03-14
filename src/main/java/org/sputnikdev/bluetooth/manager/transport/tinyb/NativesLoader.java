@@ -22,6 +22,8 @@ package org.sputnikdev.bluetooth.manager.transport.tinyb;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,6 +34,8 @@ import java.io.IOException;
  * @author Vlad Kolotov
  */
 final class NativesLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NativesLoader.class);
 
     private NativesLoader() { }
 
@@ -57,6 +61,9 @@ final class NativesLoader {
     }
 
     static boolean isSupportedEnvironment() {
+        LOGGER.debug("OS name: {}; OS arch: {}", getOsName(), getOsArch());
+        LOGGER.debug("isLinux: {}; isARM6: {}; isX86_64: {}; isX86_32: {}",
+                isLinux(), isARM6(), isX86_64(), isX86_32());
         //TODO add some checks for Bluez versions, e.g. that it is greater than v4.43
         return isLinux() && (isARM6() || isX86_64() || isX86_32());
     }
