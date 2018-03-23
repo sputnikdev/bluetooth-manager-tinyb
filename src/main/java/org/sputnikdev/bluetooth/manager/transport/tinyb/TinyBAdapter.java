@@ -28,6 +28,8 @@ import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import tinyb.BluetoothAdapter;
 import tinyb.BluetoothDevice;
+import tinyb.BluetoothException;
+import tinyb.TransportType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,14 +123,33 @@ class TinyBAdapter implements Adapter {
     @Override
     public boolean startDiscovery() {
         LOGGER.debug("Starting discovery: {}", url);
-        adapter.setRssiDiscoveryFilter(-100);
+        // NOTE: there is a bug in Bluez: https://www.spinics.net/lists/linux-bluetooth/msg67229.html
+        // which causes "GDBus.Error:org.bluez.Error.Failed: Software caused connection abort"
+        // Bluez debug log:
+        // src/device.c:att_connect_cb() connect error: Function not implemented (38)
+        // TinyB transport debug log:
+        // Software caused connection abort (103)
+        // it is provoked by setting any discovery filter
+        // however, if filter is not set (or reset), then not all devices are getting discovered
+        // so it is a trade off between having all devices discovered and stable connection establishing
+        //adapter.setRssiDiscoveryFilter(-100);
+        adapter.setDiscoveryFilter(Collections.emptyList(), 0, 0, TransportType.AUTO);
         return adapter.startDiscovery();
     }
 
     @Override
     public boolean stopDiscovery() {
         LOGGER.debug("Stopping discovery: {}", url);
-        return adapter.stopDiscovery();
+        try {
+            return adapter.stopDiscovery();
+        } catch (BluetoothException ex) {
+            if (adapter.getDiscovering()
+                    && "GDBus.Error:org.bluez.Error.Failed: No discovery started".equals(ex.getMessage())) {
+                // workaround for a Bluez bug
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
