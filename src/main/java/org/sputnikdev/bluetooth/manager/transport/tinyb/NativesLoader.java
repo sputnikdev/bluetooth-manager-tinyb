@@ -40,18 +40,22 @@ final class NativesLoader {
     private NativesLoader() { }
 
     static String prepare(String library) throws IOException, UnsupportedOperationException {
+        LOGGER.debug("Preparing {} native library", library);
         if (!isLinux()) {
-            throw new IllegalStateException("Operation system is not suported: " + getOsName());
+            throw new IllegalStateException("Operation system is not supported: " + getOsName());
         }
 
         String libraryPath = getLibFolder() + "/" + library;
         BufferedInputStream tinyBClasspathStream = null;
-
+        LOGGER.debug("Library path: {}", libraryPath);
         try {
             tinyBClasspathStream = new BufferedInputStream(NativesLoader.class.getResourceAsStream(libraryPath), 1000);
             File lib = new File(createTempDirectory(), new File(library).getName());
+            LOGGER.debug("Creating a temporary file: {}", lib.getAbsolutePath());
             if (lib.createNewFile()) {
+                LOGGER.debug("Temporary file has been created. Copying the library to that file.");
                 FileUtils.copyInputStreamToFile(tinyBClasspathStream, lib);
+                LOGGER.debug("The library has been prepared to be loaded: {}", lib.getAbsolutePath());
                 return lib.getAbsolutePath();
             }
             throw new IllegalStateException("Could not create a temporary file: " + lib.getAbsolutePath());
@@ -98,11 +102,11 @@ final class NativesLoader {
         return "x86".equals(osArch) || osArch.startsWith("i686") || osArch.startsWith("i586") || osArch.startsWith("i486") || osArch.startsWith("i386");
     }
 
-    private static String getOsName() {
+    static String getOsName() {
         return System.getProperty("os.name").toLowerCase();
     }
 
-    private static String getOsArch() {
+    static String getOsArch() {
         return System.getProperty("os.arch").toLowerCase();
     }
 

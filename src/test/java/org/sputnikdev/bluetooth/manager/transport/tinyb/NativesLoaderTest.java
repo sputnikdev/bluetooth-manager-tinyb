@@ -15,7 +15,7 @@ public class NativesLoaderTest {
     public void tesetIsSupportedEnvironment() {
         /* supported checks both OS and arch */
         System.setProperty("os.arch", "amd64");
-        System.setProperty("os.name", "linux blah blah v1");
+        System.setProperty("os.name", "Linux blah blah v1");
         assertTrue(NativesLoader.isSupportedEnvironment());
         System.setProperty("os.name", "Bindows blah blah v0.1");
         assertFalse(NativesLoader.isSupportedEnvironment());

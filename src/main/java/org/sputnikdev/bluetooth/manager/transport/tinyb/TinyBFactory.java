@@ -56,29 +56,36 @@ public class TinyBFactory implements BluetoothObjectFactory {
     private static final ExecutorService NOTIFICATION_SERVICE = Executors.newCachedThreadPool();
 
     /**
-     * Loads TinyB bundeled native libraries from classpath by copying them to a temp folder.
-     * @return true if all libraries succesefully loaded, false otherwise
+     * Loads TinyB bundled native libraries from classpath by copying them to a temp folder.
+     * @return true if all libraries successfully loaded, false otherwise
      */
     private static boolean loadBundeledNativeLibraries() {
+        LOGGER.debug("Loading native libraries from the bundle. Environment: {} : {}",
+                NativesLoader.getOsName(), NativesLoader.getOsArch());
         if (!NativesLoader.isSupportedEnvironment()) {
+            LOGGER.debug("Environment is not supported: {} : {}", NativesLoader.getOsName(), NativesLoader.getOsArch());
             return false;
         }
-
+        LOGGER.debug("The environment is supported.");
         final String[] libs = {"libtinyb.so", "libjavatinyb.so"};
         for (String lib : libs) {
             try {
-                System.load(NativesLoader.prepare(lib)); // $COVERAGE-IGNORE$
+                LOGGER.debug("Preparing {} native library", lib);
+                String tempFile = NativesLoader.prepare(lib);
+                LOGGER.debug("Loading {} native library: {}", lib, tempFile);
+                System.load(tempFile); // $COVERAGE-IGNORE$
             } catch (Throwable e) {
-                LOGGER.info("Could not load bundled TinyB native libraries.", e);
+                LOGGER.debug("Could not load bundled TinyB native libraries.", e);
                 return false;
             }
         }
+        LOGGER.debug("Native libraries has been successfully loaded from the bundle.");
         return true; // $COVERAGE-IGNORE$
     }
 
     /**
      * Loads TinyB native libraries from system paths.
-     * @return true if all libraries succesefully loaded, false otherwise
+     * @return true if all libraries successfully loaded, false otherwise
      */
     private static boolean loadSystemNativeLibraries() {
         LOGGER.info("TinyB: environment is not supported out of the box. Attempting to load system libs.");
@@ -86,20 +93,22 @@ public class TinyBFactory implements BluetoothObjectFactory {
         final String[] libs = {"tinyb", "javatinyb"};
         for (String lib : libs) {
             try {
+                LOGGER.debug("Loading native library from class path: {}", lib);
                 System.loadLibrary(lib); // $COVERAGE-IGNORE$
             } catch (Throwable e) {
-                LOGGER.info("TinyB: Could not load system libraries. Thus, environemnt is not supported. "
+                LOGGER.debug("TinyB: Could not load system libraries. Thus, environemnt is not supported. "
                     + "Only Linux OS; x86, x86_64 and arm6 architectures are supported out of the box. Consider "
                     + "providing own " + lib + ". in one of " + System.getProperty("java.library.path"), e);
                 return false;
             }
         }
+        LOGGER.debug("Native libraries has been successfully loaded from class path.");
         return true; // $COVERAGE-IGNORE$
     }
 
     /**
      * Loads TinyB native libraries (either bundeled or system ones).
-     * @return true if all libraries succesefully loaded, false otherwise
+     * @return true if all libraries successfully loaded, false otherwise
      */
     public static boolean loadNativeLibraries() {
         return loadBundeledNativeLibraries() || loadSystemNativeLibraries();
