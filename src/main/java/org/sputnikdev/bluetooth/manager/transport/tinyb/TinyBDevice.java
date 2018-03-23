@@ -25,10 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.DataConversionUtils;
 import org.sputnikdev.bluetooth.URL;
 import org.sputnikdev.bluetooth.manager.BluetoothAddressType;
+import org.sputnikdev.bluetooth.manager.BluetoothFatalException;
 import org.sputnikdev.bluetooth.manager.transport.Device;
 import org.sputnikdev.bluetooth.manager.transport.Notification;
 import org.sputnikdev.bluetooth.manager.transport.Service;
 import tinyb.BluetoothDevice;
+import tinyb.BluetoothException;
 import tinyb.BluetoothGattService;
 
 import java.util.ArrayList;
@@ -73,7 +75,14 @@ class TinyBDevice implements Device {
     @Override
     public boolean connect() {
         LOGGER.debug("Connecting: {}", url);
-        return device.connect();
+        try {
+            return device.connect();
+        } catch (BluetoothException ex) {
+            if ("GDBus.Error:org.bluez.Error.Failed: Input/output error".equals(ex.getMessage())) {
+                throw new BluetoothFatalException("Could not connect", ex);
+            }
+            throw ex;
+        }
     }
 
     @Override
@@ -103,6 +112,7 @@ class TinyBDevice implements Device {
     @Override
     public boolean isBleEnabled() {
         //TODO get proper state of manufacturer advertisement
+        LOGGER.debug("Getting ble enabled: {}", url);
         return getBluetoothClass() == 0;
     }
 
