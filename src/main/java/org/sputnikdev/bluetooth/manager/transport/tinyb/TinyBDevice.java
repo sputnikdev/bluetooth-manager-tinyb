@@ -154,6 +154,7 @@ class TinyBDevice implements Device {
     public void enableRSSINotifications(Notification<Short> notification) {
         LOGGER.debug("Enable RSSI notifications: {}", url);
         device.enableRSSINotifications(value -> {
+            LOGGER.trace("RSSI {} : {}", url, value);
             TinyBFactory.notifySafely(() -> {
                 notification.notify(value);
             }, LOGGER, "RSSI notification execution error");
