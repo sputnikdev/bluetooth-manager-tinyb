@@ -133,7 +133,13 @@ class TinyBAdapter implements Adapter {
         // however, if filter is not set (or reset), then not all devices are getting discovered
         // so it is a trade off between having all devices discovered and stable connection establishing
         //adapter.setRssiDiscoveryFilter(-100);
-        adapter.setDiscoveryFilter(Collections.emptyList(), 0, 0, TransportType.AUTO);
+        try {
+            adapter.setDiscoveryFilter(Collections.emptyList(), 0, 0, TransportType.AUTO);
+        } catch (Exception ex) {
+            // some adapters are reported not to support this, hence ignore and log it
+            // GDBus.Error:org.bluez.Error.NotSupported
+            LOGGER.warn("Adapter does not support filtering: {}. Reason: {}.", url, ex.getMessage());
+        }
         return adapter.startDiscovery();
     }
 

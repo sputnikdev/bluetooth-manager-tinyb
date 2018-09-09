@@ -40,7 +40,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 @PrepareForTest({ NativesLoader.class, TinyBFactory.class })
 public class TinyBFactoryTest {
 
-    private static final URL CHARACTERISTIC = new URL("tinyb://11:22:33:44:55:66/10:20:30:40:50:60/0180/aa11");
+    private static final URL CHARACTERISTIC = new URL("tinyb:/11:22:33:44:55:66/10:20:30:40:50:60/0180/aa11");
     private static final URL DEVICE = CHARACTERISTIC.getDeviceURL();
     private static final URL ADAPTER = DEVICE.getAdapterURL();
 
